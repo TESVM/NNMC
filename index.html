@@ -777,6 +777,7 @@
 </footer>
 
 <script>
+  const API_CONTENT_URL = "/.netlify/functions/site-content";
   const DEFAULT_CONTENT = {
     event: {
       eyebrow: "AOH Church of God",
@@ -838,21 +839,26 @@
     }
   };
 
-  function getContent() {
+  function mergeContent(stored) {
+    return {
+      event: { ...DEFAULT_CONTENT.event, ...(stored.event || {}) },
+      about: { ...DEFAULT_CONTENT.about, ...(stored.about || {}) },
+      speakers: Array.isArray(stored.speakers) && stored.speakers.length
+        ? stored.speakers.map((speaker, index) => ({ ...DEFAULT_CONTENT.speakers[index % DEFAULT_CONTENT.speakers.length], ...speaker }))
+        : DEFAULT_CONTENT.speakers,
+      workshops: Array.isArray(stored.workshops) && stored.workshops.length ? stored.workshops : DEFAULT_CONTENT.workshops,
+      schedule: Array.isArray(stored.schedule) && stored.schedule.length ? stored.schedule : DEFAULT_CONTENT.schedule,
+      venue: { ...DEFAULT_CONTENT.venue, ...(stored.venue || {}) },
+      pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
+    };
+  }
+
+  async function getContent() {
     try {
-      const stored = JSON.parse(localStorage.getItem("nnmc_site_content") || "null");
-      if (!stored) return structuredClone(DEFAULT_CONTENT);
-      return {
-        event: { ...DEFAULT_CONTENT.event, ...(stored.event || {}) },
-        about: { ...DEFAULT_CONTENT.about, ...(stored.about || {}) },
-        speakers: Array.isArray(stored.speakers) && stored.speakers.length
-          ? stored.speakers.map((speaker, index) => ({ ...DEFAULT_CONTENT.speakers[index % DEFAULT_CONTENT.speakers.length], ...speaker }))
-          : DEFAULT_CONTENT.speakers,
-        workshops: Array.isArray(stored.workshops) && stored.workshops.length ? stored.workshops : DEFAULT_CONTENT.workshops,
-        schedule: Array.isArray(stored.schedule) && stored.schedule.length ? stored.schedule : DEFAULT_CONTENT.schedule,
-        venue: { ...DEFAULT_CONTENT.venue, ...(stored.venue || {}) },
-        pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
-      };
+      const response = await fetch(API_CONTENT_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error("Failed to load site content.");
+      const payload = await response.json();
+      return mergeContent(payload.content || {});
     } catch {
       return structuredClone(DEFAULT_CONTENT);
     }
@@ -863,8 +869,8 @@
     if (node) node.textContent = value;
   }
 
-  function renderPage() {
-    const content = getContent();
+  async function renderPage() {
+    const content = await getContent();
     applyLogo(content.event.logoData);
     setText("heroEyebrow", content.event.eyebrow);
     setText("heroTitle", content.event.title);

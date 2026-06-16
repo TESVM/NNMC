@@ -3,3 +3,5 @@ NNMC-netlify-upload.zip
 .git
 .gitignore
 .netlify
+node_modules
+package-lock.json

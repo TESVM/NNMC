@@ -563,6 +563,14 @@
 <div id="toast" class="toast"></div>
 
 <script>
+  const API = {
+    content: "/.netlify/functions/site-content",
+    registrations: "/.netlify/functions/registrations",
+    login: "/.netlify/functions/admin-login",
+    session: "/.netlify/functions/admin-session",
+    credentials: "/.netlify/functions/admin-credentials"
+  };
+
   const DEFAULT_CONTENT = {
     event: {
       eyebrow: "AOH Church of God",
@@ -624,79 +632,45 @@
     }
   };
 
-  const DEFAULT_CREDS = { username: "admin", password: "nnmc2025" };
+  let authToken = sessionStorage.getItem("nnmc_admin_token") || "";
+  let currentUsername = "admin";
+  let currentContent = structuredClone(DEFAULT_CONTENT);
+  let currentRegistrations = [];
 
-  function getContent() {
-    try {
-      const stored = JSON.parse(localStorage.getItem("nnmc_site_content") || "null");
-      if (!stored) return structuredClone(DEFAULT_CONTENT);
-      return {
-        event: { ...DEFAULT_CONTENT.event, ...(stored.event || {}) },
-        about: { ...DEFAULT_CONTENT.about, ...(stored.about || {}) },
-        speakers: Array.isArray(stored.speakers) && stored.speakers.length
-          ? stored.speakers.map((speaker, index) => ({ ...structuredClone(DEFAULT_CONTENT.speakers[index % DEFAULT_CONTENT.speakers.length]), ...speaker }))
-          : structuredClone(DEFAULT_CONTENT.speakers),
-        workshops: Array.isArray(stored.workshops) && stored.workshops.length ? stored.workshops : structuredClone(DEFAULT_CONTENT.workshops),
-        schedule: Array.isArray(stored.schedule) && stored.schedule.length ? stored.schedule : structuredClone(DEFAULT_CONTENT.schedule),
-        venue: { ...DEFAULT_CONTENT.venue, ...(stored.venue || {}) },
-        pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
-      };
-    } catch {
-      return structuredClone(DEFAULT_CONTENT);
-    }
+  function mergeContent(stored) {
+    return {
+      event: { ...DEFAULT_CONTENT.event, ...(stored.event || {}) },
+      about: { ...DEFAULT_CONTENT.about, ...(stored.about || {}) },
+      speakers: Array.isArray(stored.speakers) && stored.speakers.length
+        ? stored.speakers.map((speaker, index) => ({ ...structuredClone(DEFAULT_CONTENT.speakers[index % DEFAULT_CONTENT.speakers.length]), ...speaker }))
+        : structuredClone(DEFAULT_CONTENT.speakers),
+      workshops: Array.isArray(stored.workshops) && stored.workshops.length ? stored.workshops : structuredClone(DEFAULT_CONTENT.workshops),
+      schedule: Array.isArray(stored.schedule) && stored.schedule.length ? stored.schedule : structuredClone(DEFAULT_CONTENT.schedule),
+      venue: { ...DEFAULT_CONTENT.venue, ...(stored.venue || {}) },
+      pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
+    };
   }
 
-  function setContent(content) {
-    try {
-      localStorage.setItem("nnmc_site_content", JSON.stringify(content));
-      return true;
-    } catch (error) {
-      const isQuotaError = error && (
-        error.name === "QuotaExceededError" ||
-        error.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
-        error.code === 22 ||
-        error.code === 1014
-      );
-      showToast(isQuotaError ? "Storage is full. Use smaller images or fewer uploads." : "Unable to save site content.", true);
-      return false;
-    }
-  }
+  async function apiRequest(url, { method = "GET", body, auth = false } = {}) {
+    const headers = {};
+    if (body !== undefined) headers["Content-Type"] = "application/json";
+    if (auth && authToken) headers.Authorization = `Bearer ${authToken}`;
 
-  function getCredentials() {
-    try {
-      return JSON.parse(localStorage.getItem("nnmc_admin_credentials") || "null") || { ...DEFAULT_CREDS };
-    } catch {
-      return { ...DEFAULT_CREDS };
-    }
-  }
+    const response = await fetch(url, {
+      method,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined
+    });
 
-  function setCredentials(credentials) {
-    try {
-      localStorage.setItem("nnmc_admin_credentials", JSON.stringify(credentials));
-      return true;
-    } catch {
-      showToast("Unable to save credentials.", true);
-      return false;
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      if (response.status === 401 && auth) {
+        sessionStorage.removeItem("nnmc_admin_token");
+        authToken = "";
+      }
+      throw new Error(payload.error || "Request failed.");
     }
-  }
-
-  function getRegistrations() {
-    try {
-      const stored = JSON.parse(localStorage.getItem("nnmc_registrations") || "[]");
-      return Array.isArray(stored) ? stored : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function setRegistrations(registrations) {
-    try {
-      localStorage.setItem("nnmc_registrations", JSON.stringify(registrations));
-      return true;
-    } catch {
-      showToast("Unable to save registrations.", true);
-      return false;
-    }
+    return payload;
   }
 
   function showToast(message, isError = false) {
@@ -708,29 +682,101 @@
     showToast.timeoutId = setTimeout(() => toast.classList.remove("show"), 2800);
   }
 
-  function login() {
-    const creds = getCredentials();
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value;
-    const matches = username === creds.username && password === creds.password;
+  function showLoginScreen() {
+    document.getElementById("app").style.display = "none";
+    document.getElementById("loginScreen").style.display = "grid";
+  }
 
-    document.getElementById("loginError").style.display = matches ? "none" : "block";
-    if (!matches) return;
-
+  function showApp() {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("app").style.display = "block";
-    loadAdmin();
+  }
+
+  async function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+    try {
+      const payload = await apiRequest(API.login, {
+        method: "POST",
+        body: { username, password }
+      });
+      authToken = payload.token;
+      currentUsername = payload.username;
+      sessionStorage.setItem("nnmc_admin_token", authToken);
+      document.getElementById("loginError").style.display = "none";
+      showApp();
+      await loadAdmin();
+    } catch {
+      document.getElementById("loginError").style.display = "block";
+    }
   }
 
   function logout() {
-    document.getElementById("app").style.display = "none";
-    document.getElementById("loginScreen").style.display = "grid";
+    sessionStorage.removeItem("nnmc_admin_token");
+    authToken = "";
+    showLoginScreen();
     document.getElementById("password").value = "";
   }
 
-  function loadAdmin() {
-    const content = getContent();
-    const creds = getCredentials();
+  function collectContentFromForm() {
+    return {
+      ...currentContent,
+      event: {
+        eyebrow: document.getElementById("eventEyebrow").value.trim(),
+        ctaText: document.getElementById("eventCtaText").value.trim(),
+        title: document.getElementById("eventTitle").value.trim(),
+        subtitle: document.getElementById("eventSubtitle").value.trim(),
+        date: document.getElementById("eventDate").value.trim(),
+        time: document.getElementById("eventTime").value.trim(),
+        location: document.getElementById("eventLocation").value.trim(),
+        logoData: currentLogoData,
+        countdownTarget: fromLocalDateTimeValue(document.getElementById("countdownTarget").value)
+      },
+      about: {
+        label: document.getElementById("aboutLabel").value.trim(),
+        title: document.getElementById("aboutTitle").value.trim(),
+        p1: document.getElementById("aboutP1").value.trim(),
+        p2: document.getElementById("aboutP2").value.trim(),
+        quote: document.getElementById("aboutQuote").value.trim()
+      },
+      venue: {
+        name: document.getElementById("venueName").value.trim(),
+        address: document.getElementById("venueAddress").value.trim(),
+        cityState: document.getElementById("venueCityState").value.trim(),
+        email: document.getElementById("venueEmail").value.trim(),
+        phone: document.getElementById("venuePhone").value.trim(),
+        arrival: document.getElementById("venueArrival").value.trim()
+      },
+      pricing: {
+        paymentMethods: document.getElementById("paymentMethods").value.trim(),
+        earlyLabel: document.getElementById("earlyLabel").value.trim(),
+        earlyPrice: document.getElementById("earlyPrice").value.trim(),
+        regularLabel: document.getElementById("regularLabel").value.trim(),
+        regularPrice: document.getElementById("regularPrice").value.trim()
+      }
+    };
+  }
+
+  async function persistCurrentContent() {
+    currentContent = collectContentFromForm();
+    const payload = await apiRequest(API.content, {
+      method: "POST",
+      body: currentContent,
+      auth: true
+    });
+    currentContent = mergeContent(payload.content || {});
+  }
+
+  async function loadAdmin() {
+    const [contentPayload, sessionPayload, registrationsPayload] = await Promise.all([
+      apiRequest(API.content, { auth: true }),
+      apiRequest(API.session, { auth: true }),
+      apiRequest(API.registrations, { auth: true })
+    ]);
+    const content = mergeContent(contentPayload.content || {});
+    currentContent = content;
+    currentUsername = sessionPayload.username || currentUsername;
+    currentRegistrations = Array.isArray(registrationsPayload.registrations) ? registrationsPayload.registrations : [];
 
     document.getElementById("eventEyebrow").value = content.event.eyebrow;
     document.getElementById("eventCtaText").value = content.event.ctaText;
@@ -761,7 +807,7 @@
     document.getElementById("regularLabel").value = content.pricing.regularLabel;
     document.getElementById("regularPrice").value = content.pricing.regularPrice;
 
-    document.getElementById("adminUsername").value = creds.username;
+    document.getElementById("adminUsername").value = currentUsername;
     document.getElementById("newPassword").value = "";
     document.getElementById("confirmPassword").value = "";
 
@@ -773,11 +819,10 @@
   }
 
   function renderStats() {
-    const registrations = getRegistrations();
-    const churches = new Set(registrations.map((item) => item.church).filter(Boolean));
-    document.getElementById("statTotal").textContent = registrations.length;
-    document.getElementById("statEarly").textContent = registrations.filter((item) => item.tier === "early").length;
-    document.getElementById("statRegular").textContent = registrations.filter((item) => item.tier === "regular").length;
+    const churches = new Set(currentRegistrations.map((item) => item.church).filter(Boolean));
+    document.getElementById("statTotal").textContent = currentRegistrations.length;
+    document.getElementById("statEarly").textContent = currentRegistrations.filter((item) => item.tier === "early").length;
+    document.getElementById("statRegular").textContent = currentRegistrations.filter((item) => item.tier === "regular").length;
     document.getElementById("statChurches").textContent = churches.size;
   }
 
@@ -820,14 +865,13 @@
 
   function renderRegistrations() {
     const body = document.getElementById("registrationBody");
-    const registrations = getRegistrations();
 
-    if (!registrations.length) {
-      body.innerHTML = `<tr><td colspan="8">No registrations saved on this device.</td></tr>`;
+    if (!currentRegistrations.length) {
+      body.innerHTML = `<tr><td colspan="8">No registrations have been submitted yet.</td></tr>`;
       return;
     }
 
-    body.innerHTML = registrations.map((item, index) => `
+    body.innerHTML = currentRegistrations.map((item) => `
       <tr>
         <td>${escapeHtml(item.fullName || "")}</td>
         <td>${escapeHtml(item.church || "")}</td>
@@ -836,90 +880,69 @@
         <td>${escapeHtml(item.phone || "")}</td>
         <td>${escapeHtml(item.paymentMethod || "")}</td>
         <td>${item.createdAt ? new Date(item.createdAt).toLocaleString() : ""}</td>
-        <td><button class="btn btn-danger" type="button" onclick="deleteRegistration(${index})">Delete</button></td>
+        <td><button class="btn btn-danger" type="button" onclick="deleteRegistration('${escapeAttribute(item.id || "")}')">Delete</button></td>
       </tr>
     `).join("");
   }
 
-  function saveContent() {
-    const content = getContent();
-    content.event = {
-      eyebrow: document.getElementById("eventEyebrow").value.trim(),
-      ctaText: document.getElementById("eventCtaText").value.trim(),
-      title: document.getElementById("eventTitle").value.trim(),
-      subtitle: document.getElementById("eventSubtitle").value.trim(),
-      date: document.getElementById("eventDate").value.trim(),
-      time: document.getElementById("eventTime").value.trim(),
-      location: document.getElementById("eventLocation").value.trim(),
-      logoData: currentLogoData,
-      countdownTarget: fromLocalDateTimeValue(document.getElementById("countdownTarget").value)
-    };
-    content.about = {
-      label: document.getElementById("aboutLabel").value.trim(),
-      title: document.getElementById("aboutTitle").value.trim(),
-      p1: document.getElementById("aboutP1").value.trim(),
-      p2: document.getElementById("aboutP2").value.trim(),
-      quote: document.getElementById("aboutQuote").value.trim()
-    };
-    content.venue = {
-      name: document.getElementById("venueName").value.trim(),
-      address: document.getElementById("venueAddress").value.trim(),
-      cityState: document.getElementById("venueCityState").value.trim(),
-      email: document.getElementById("venueEmail").value.trim(),
-      phone: document.getElementById("venuePhone").value.trim(),
-      arrival: document.getElementById("venueArrival").value.trim()
-    };
-    content.pricing = {
-      paymentMethods: document.getElementById("paymentMethods").value.trim(),
-      earlyLabel: document.getElementById("earlyLabel").value.trim(),
-      earlyPrice: document.getElementById("earlyPrice").value.trim(),
-      regularLabel: document.getElementById("regularLabel").value.trim(),
-      regularPrice: document.getElementById("regularPrice").value.trim()
-    };
-    if (!setContent(content)) return;
-    showToast("Content saved.");
+  async function saveContent() {
+    try {
+      await persistCurrentContent();
+      showToast("Content saved.");
+    } catch (error) {
+      showToast(error.message || "Content could not be saved.", true);
+    }
   }
 
-  function saveSpeakers() {
-    const content = getContent();
+  async function saveSpeakers() {
     const rows = [...document.querySelectorAll("#speakerRows .speaker-row")];
-    content.speakers = rows.map((row) => ({
+    currentContent.speakers = rows.map((row) => ({
       name: row.querySelector(".speaker-name").value.trim(),
       role: row.querySelector(".speaker-role").value.trim(),
       photoData: row.querySelector(".speaker-preview").getAttribute("src") || ""
     })).filter((speaker) => speaker.name || speaker.role);
-    if (!setContent(content)) return;
-    renderSpeakers(content.speakers);
-    showToast("Speakers saved.");
+    try {
+      await persistCurrentContent();
+      renderSpeakers(currentContent.speakers);
+      showToast("Speakers saved.");
+    } catch (error) {
+      showToast(error.message || "Speakers could not be saved.", true);
+    }
   }
 
-  function saveSchedule() {
-    const content = getContent();
+  async function saveSchedule() {
     const rows = [...document.querySelectorAll("#scheduleRows .schedule-row")];
-    content.schedule = rows.map((row) => ({
+    currentContent.schedule = rows.map((row) => ({
       time: row.querySelector(".schedule-time").value.trim(),
       title: row.querySelector(".schedule-title").value.trim(),
       speaker: row.querySelector(".schedule-speaker").value.trim()
     })).filter((item) => item.time || item.title || item.speaker);
-    if (!setContent(content)) return;
-    renderSchedule(content.schedule);
-    showToast("Schedule saved.");
+    try {
+      await persistCurrentContent();
+      renderSchedule(currentContent.schedule);
+      showToast("Schedule saved.");
+    } catch (error) {
+      showToast(error.message || "Schedule could not be saved.", true);
+    }
   }
 
-  function saveWorkshops() {
-    const content = getContent();
+  async function saveWorkshops() {
     const rows = [...document.querySelectorAll("#workshopRows .workshop-row")];
-    content.workshops = rows.map((row) => ({
+    currentContent.workshops = rows.map((row) => ({
       title: row.querySelector(".workshop-title").value.trim(),
       facilitator: row.querySelector(".workshop-facilitator").value.trim(),
       description: row.querySelector(".workshop-description").value.trim()
     })).filter((item) => item.title || item.facilitator || item.description);
-    if (!setContent(content)) return;
-    renderWorkshops(content.workshops);
-    showToast("Workshops saved.");
+    try {
+      await persistCurrentContent();
+      renderWorkshops(currentContent.workshops);
+      showToast("Workshops saved.");
+    } catch (error) {
+      showToast(error.message || "Workshops could not be saved.", true);
+    }
   }
 
-  function saveCredentials() {
+  async function saveCredentials() {
     const username = document.getElementById("adminUsername").value.trim();
     const newPassword = document.getElementById("newPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
@@ -937,32 +960,56 @@
       return;
     }
 
-    if (!setCredentials({ username, password: newPassword })) return;
-    document.getElementById("newPassword").value = "";
-    document.getElementById("confirmPassword").value = "";
-    showToast("Credentials updated.");
+    try {
+      await apiRequest(API.credentials, {
+        method: "POST",
+        body: { username, password: newPassword },
+        auth: true
+      });
+      currentUsername = username;
+      document.getElementById("newPassword").value = "";
+      document.getElementById("confirmPassword").value = "";
+      showToast("Credentials updated.");
+    } catch (error) {
+      showToast(error.message || "Credentials could not be saved.", true);
+    }
   }
 
-  function deleteRegistration(index) {
-    const registrations = getRegistrations();
-    registrations.splice(index, 1);
-    if (!setRegistrations(registrations)) return;
-    renderRegistrations();
-    renderStats();
-    showToast("Registration deleted.");
+  async function deleteRegistration(id) {
+    try {
+      const payload = await apiRequest(API.registrations, {
+        method: "DELETE",
+        body: { id },
+        auth: true
+      });
+      currentRegistrations = Array.isArray(payload.registrations) ? payload.registrations : [];
+      renderRegistrations();
+      renderStats();
+      showToast("Registration deleted.");
+    } catch (error) {
+      showToast(error.message || "Registration could not be deleted.", true);
+    }
   }
 
-  function clearRegistrations() {
+  async function clearRegistrations() {
     if (!confirm("Clear all saved registrations on this device?")) return;
-    if (!setRegistrations([])) return;
-    renderRegistrations();
-    renderStats();
-    showToast("All registrations cleared.");
+    try {
+      const payload = await apiRequest(API.registrations, {
+        method: "DELETE",
+        body: { clearAll: true },
+        auth: true
+      });
+      currentRegistrations = Array.isArray(payload.registrations) ? payload.registrations : [];
+      renderRegistrations();
+      renderStats();
+      showToast("All registrations cleared.");
+    } catch (error) {
+      showToast(error.message || "Registrations could not be cleared.", true);
+    }
   }
 
   function exportCsv() {
-    const registrations = getRegistrations();
-    if (!registrations.length) {
+    if (!currentRegistrations.length) {
       showToast("No registrations to export.", true);
       return;
     }
@@ -970,7 +1017,7 @@
     const headers = ["fullName", "email", "phone", "church", "pastor", "clergyRole", "tier", "address", "cityState", "paymentMethod", "notes", "createdAt"];
     const rows = [
       headers.join(","),
-      ...registrations.map((entry) => headers.map((key) => csvEscape(entry[key] || "")).join(","))
+      ...currentRegistrations.map((entry) => headers.map((key) => csvEscape(entry[key] || "")).join(","))
     ];
 
     const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" });
@@ -990,31 +1037,23 @@
   }
 
   function removeSpeakerRow(index) {
-    const content = getContent();
-    content.speakers.splice(index, 1);
-    if (!setContent(content)) return;
-    renderSpeakers(content.speakers);
+    currentContent.speakers.splice(index, 1);
+    renderSpeakers(currentContent.speakers);
   }
 
   function removeScheduleRow(index) {
-    const content = getContent();
-    content.schedule.splice(index, 1);
-    if (!setContent(content)) return;
-    renderSchedule(content.schedule);
+    currentContent.schedule.splice(index, 1);
+    renderSchedule(currentContent.schedule);
   }
 
   function removeWorkshopRow(index) {
-    const content = getContent();
-    content.workshops.splice(index, 1);
-    if (!setContent(content)) return;
-    renderWorkshops(content.workshops);
+    currentContent.workshops.splice(index, 1);
+    renderWorkshops(currentContent.workshops);
   }
 
   function addSpeakerRow() {
-    const content = getContent();
-    content.speakers.push({ name: "", role: "", photoData: "" });
-    if (!setContent(content)) return;
-    renderSpeakers(content.speakers);
+    currentContent.speakers.push({ name: "", role: "", photoData: "" });
+    renderSpeakers(currentContent.speakers);
   }
 
   function handleSpeakerPhotoUpload(event, index) {
@@ -1022,29 +1061,23 @@
     if (!file) return;
     const reader = new FileReader();
     reader.onload = async () => {
-      const content = getContent();
-      if (!content.speakers[index]) return;
+      if (!currentContent.speakers[index]) return;
       const optimizedImage = await resizeImageDataUrl(reader.result, 360, 0.8);
-      content.speakers[index].photoData = optimizedImage;
-      if (!setContent(content)) return;
-      renderSpeakers(content.speakers);
+      currentContent.speakers[index].photoData = optimizedImage;
+      renderSpeakers(currentContent.speakers);
       showToast("Speaker photo loaded. Click Save Speakers to keep it.");
     };
     reader.readAsDataURL(file);
   }
 
   function addScheduleRow() {
-    const content = getContent();
-    content.schedule.push({ time: "", title: "", speaker: "" });
-    if (!setContent(content)) return;
-    renderSchedule(content.schedule);
+    currentContent.schedule.push({ time: "", title: "", speaker: "" });
+    renderSchedule(currentContent.schedule);
   }
 
   function addWorkshopRow() {
-    const content = getContent();
-    content.workshops.push({ title: "", facilitator: "", description: "" });
-    if (!setContent(content)) return;
-    renderWorkshops(content.workshops);
+    currentContent.workshops.push({ title: "", facilitator: "", description: "" });
+    renderWorkshops(currentContent.workshops);
   }
 
   function resizeImageDataUrl(dataUrl, maxSize = 360, quality = 0.82) {
@@ -1151,6 +1184,16 @@
   document.querySelectorAll(".sidebar button").forEach((button) => {
     button.addEventListener("click", () => switchTab(button.dataset.tab));
   });
+  (async () => {
+    if (!authToken) return showLoginScreen();
+    try {
+      await apiRequest(API.session, { auth: true });
+      showApp();
+      await loadAdmin();
+    } catch {
+      logout();
+    }
+  })();
 </script>
 </body>
 </html>

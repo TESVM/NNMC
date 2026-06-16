@@ -444,6 +444,8 @@
 </main>
 
 <script>
+  const API_CONTENT_URL = "/.netlify/functions/site-content";
+  const API_REGISTRATIONS_URL = "/.netlify/functions/registrations";
   const DEFAULT_CONTENT = {
     event: {
       title: "Northern North Ministerial Council",
@@ -462,20 +464,23 @@
     }
   };
 
-  function getContent() {
+  async function getContent() {
     try {
-      const stored = JSON.parse(localStorage.getItem("nnmc_site_content") || "null");
+      const response = await fetch(API_CONTENT_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error("Failed to load site content.");
+      const payload = await response.json();
+      const stored = payload.content || {};
       return {
-        event: { ...DEFAULT_CONTENT.event, ...((stored && stored.event) || {}) },
-        pricing: { ...DEFAULT_CONTENT.pricing, ...((stored && stored.pricing) || {}) }
+        event: { ...DEFAULT_CONTENT.event, ...(stored.event || {}) },
+        pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
       };
     } catch {
       return structuredClone(DEFAULT_CONTENT);
     }
   }
 
-  function renderContent() {
-    const content = getContent();
+  async function renderContent() {
+    const content = await getContent();
     applyLogo(content.event.logoData);
     document.getElementById("pageTitle").textContent = `Register for ${content.event.title}`;
     document.getElementById("pageSubtitle").textContent = content.event.subtitle;
@@ -521,14 +526,20 @@
       .replaceAll("'", "&#39;");
   }
 
-  function saveRegistration(payload) {
-    const existing = JSON.parse(localStorage.getItem("nnmc_registrations") || "[]");
-    existing.push(payload);
-    localStorage.setItem("nnmc_registrations", JSON.stringify(existing));
+  async function saveRegistration(payload) {
+    const response = await fetch(API_REGISTRATIONS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      const errorPayload = await response.json().catch(() => ({}));
+      throw new Error(errorPayload.error || "Registration could not be saved.");
+    }
   }
 
   const form = document.getElementById("registrationForm");
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const requiredIds = ["fullName", "phone", "church", "pastor"];
     let valid = true;
@@ -561,10 +572,14 @@
       tier
     };
 
-    saveRegistration(payload);
-    form.reset();
-    renderContent();
-    document.getElementById("successMessage").classList.add("show");
+    try {
+      await saveRegistration(payload);
+      form.reset();
+      await renderContent();
+      document.getElementById("successMessage").classList.add("show");
+    } catch (error) {
+      alert(error.message || "Registration could not be saved.");
+    }
   });
 
   renderContent();
