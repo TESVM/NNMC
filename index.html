@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northern North Ministerial Council</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1d1b2a;
+    --plum: #2a163f;
+    --plum-soft: #4d2a73;
+    --gold: #d3aa47;
+    --gold-soft: #f1dc9d;
+    --paper: #fbf7ef;
+    --mist: #f0ebdf;
+    --line: #ddd2bd;
+    --success: #2a7a57;
+    --font-display: "Cinzel", serif;
+    --font-body: "Source Sans 3", sans-serif;
+    --shadow: 0 24px 60px rgba(24, 14, 37, 0.18);
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: linear-gradient(180deg, #fdfbf6 0%, #f7f1e4 100%);
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  button, input, textarea, select { font: inherit; }
+
+  .shell {
+    width: min(1120px, calc(100% - 2rem));
+    margin: 0 auto;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(14px);
+    background: rgba(42, 22, 63, 0.9);
+    border-bottom: 1px solid rgba(241, 220, 157, 0.22);
+  }
+  .topbar-inner {
+    width: min(1120px, calc(100% - 2rem));
+    margin: 0 auto;
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-width: 0;
+  }
+  .brand-mark {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 30%, #f6e6b8 0%, #d3aa47 42%, #845f1c 100%);
+    color: var(--plum);
+    display: grid;
+    place-items: center;
+    font-size: 1.45rem;
+    box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.35);
+  }
+  .brand-mark img,
+  .footer-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .brand-copy {
+    min-width: 0;
+    color: #fff8eb;
+  }
+  .brand-copy strong,
+  .brand-copy span {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .brand-copy strong {
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .brand-copy span {
+    font-size: 0.8rem;
+    color: rgba(255, 248, 235, 0.75);
+  }
+  .nav-toggle {
+    display: none;
+    background: transparent;
+    color: #fff8eb;
+    border: 1px solid rgba(241, 220, 157, 0.35);
+    border-radius: 999px;
+    padding: 0.55rem 0.9rem;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: #f1dc9d;
+  }
+  .nav-links a {
+    font-size: 0.83rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .nav-links .cta-link {
+    padding: 0.65rem 1rem;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--plum);
+    font-weight: 700;
+  }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at top left, rgba(241, 220, 157, 0.22), transparent 30%),
+      radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.12), transparent 22%),
+      linear-gradient(155deg, #13091f 0%, #2a163f 55%, #593384 100%);
+    color: #fffdf6;
+  }
+  .hero::before,
+  .hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(2px);
+    opacity: 0.18;
+    pointer-events: none;
+  }
+  .hero::before {
+    width: 360px;
+    height: 360px;
+    right: -80px;
+    top: -60px;
+    background: radial-gradient(circle, var(--gold-soft) 0%, transparent 70%);
+  }
+  .hero::after {
+    width: 260px;
+    height: 260px;
+    left: -70px;
+    bottom: -120px;
+    background: radial-gradient(circle, #ffffff 0%, transparent 70%);
+  }
+  .hero-inner {
+    width: min(1120px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 5.5rem 0 4.5rem;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .hero-copy {
+    position: relative;
+    z-index: 1;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    color: var(--gold-soft);
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 42px;
+    height: 1px;
+    background: currentColor;
+  }
+  .hero h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 5vw, 4.6rem);
+    line-height: 1.06;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .hero-subtitle {
+    margin: 1.15rem 0 0;
+    font-size: clamp(1.08rem, 2.2vw, 1.45rem);
+    color: rgba(255, 253, 246, 0.84);
+    max-width: 42rem;
+  }
+  .hero-meta {
+    margin-top: 1.75rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .hero-meta-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(241, 220, 157, 0.22);
+    border-radius: 16px;
+    padding: 1rem 1.05rem;
+  }
+  .hero-meta-card span {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--gold-soft);
+    margin-bottom: 0.4rem;
+  }
+  .hero-meta-card strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fffdf6;
+  }
+  .hero-actions {
+    margin-top: 1.75rem;
+    display: flex;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50px;
+    padding: 0.9rem 1.35rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: 180ms ease;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--plum);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: #fffdf6;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+  }
+  .hero-panel {
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 252, 243, 0.1);
+    border: 1px solid rgba(241, 220, 157, 0.24);
+    border-radius: 28px;
+    padding: 1.4rem;
+    box-shadow: var(--shadow);
+  }
+  .countdown-card {
+    background: rgba(16, 8, 24, 0.55);
+    border-radius: 22px;
+    padding: 1.45rem;
+  }
+  .countdown-card h2 {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .countdown-card p {
+    margin: 0;
+    color: rgba(255, 253, 246, 0.75);
+  }
+  .countdown-grid {
+    margin-top: 1.2rem;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+  .countdown-unit {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 1rem 0.6rem;
+    text-align: center;
+  }
+  .countdown-unit strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    color: var(--gold-soft);
+    line-height: 1;
+  }
+  .countdown-unit span {
+    display: block;
+    margin-top: 0.45rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 253, 246, 0.72);
+  }
+  .countdown-message {
+    margin-top: 1rem;
+    color: var(--gold-soft);
+    font-weight: 600;
+  }
+
+  .section {
+    padding: 4.8rem 0;
+  }
+  .section-alt {
+    background:
+      radial-gradient(circle at top center, rgba(241, 220, 157, 0.18), transparent 28%),
+      rgba(255, 255, 255, 0.52);
+  }
+  .section-head {
+    margin-bottom: 2rem;
+  }
+  .section-head span {
+    display: block;
+    color: var(--plum-soft);
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.55rem;
+  }
+  .section-head h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3vw, 2.7rem);
+    color: var(--plum);
+  }
+  .section-head p {
+    margin: 0.75rem 0 0;
+    max-width: 42rem;
+    color: #4f4a57;
+    font-size: 1.02rem;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 1.6rem;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 14px 34px rgba(36, 22, 53, 0.08);
+  }
+  .copy-card {
+    padding: 1.7rem;
+  }
+  .copy-card p {
+    margin: 0 0 1rem;
+    color: #4f4a57;
+    font-size: 1.03rem;
+  }
+  .quote-card {
+    padding: 1.7rem;
+    background: linear-gradient(180deg, rgba(42, 22, 63, 0.96), rgba(89, 51, 132, 0.96));
+    color: #fffdf6;
+  }
+  .quote-card strong {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: var(--gold-soft);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+  }
+  .quote-card blockquote {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.12rem;
+    line-height: 1.7;
+  }
+
+  .speaker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 1.8rem;
+  }
+  .speaker-card {
+    padding: 2rem 1.6rem 1.9rem;
+    text-align: center;
+    min-height: 100%;
+    border-radius: 34px;
+    border-color: rgba(220, 196, 142, 0.88);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 26px 54px rgba(181, 161, 123, 0.18);
+  }
+  .speaker-seal {
+    width: 164px;
+    height: 164px;
+    margin: 0 auto 1.55rem;
+    border-radius: 50%;
+    border: 4px solid rgba(227, 199, 135, 0.95);
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle at 35% 35%, #fff8e9 0%, #f3e7c2 72%, #ead7a6 100%);
+    color: var(--plum);
+    font-size: 2.9rem;
+    box-shadow: inset 0 10px 28px rgba(255, 255, 255, 0.55);
+    overflow: hidden;
+  }
+  .speaker-seal img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .speaker-card h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.55rem, 2.4vw, 2.05rem);
+    color: var(--plum);
+    line-height: 1.18;
+    text-transform: uppercase;
+  }
+  .speaker-card p {
+    margin: 1rem 0 0;
+    color: #696473;
+    font-size: clamp(1.05rem, 1.8vw, 1.28rem);
+  }
+
+  .workshop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+  }
+  .workshop-card {
+    padding: 1.4rem;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.86);
+  }
+  .workshop-card strong {
+    display: block;
+    margin-bottom: 0.45rem;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    line-height: 1.35;
+    color: var(--plum);
+    text-transform: uppercase;
+  }
+  .workshop-card span {
+    display: block;
+    color: var(--plum-soft);
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+  }
+  .workshop-card p {
+    margin: 0;
+    color: #5d5764;
+    line-height: 1.65;
+  }
+
+  .schedule-list {
+    display: grid;
+    gap: 0.9rem;
+  }
+  .schedule-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 1rem;
+    align-items: start;
+    padding: 1rem 1.1rem;
+  }
+  .schedule-time {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    color: var(--plum);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .schedule-details strong {
+    display: block;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+  .schedule-details span {
+    display: block;
+    margin-top: 0.3rem;
+    color: #6e6874;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .info-card {
+    padding: 1.3rem;
+  }
+  .info-card h3 {
+    margin: 0 0 0.55rem;
+    font-family: var(--font-display);
+    font-size: 0.92rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--plum);
+  }
+  .info-card p,
+  .info-card address {
+    margin: 0;
+    color: #5d5764;
+    font-style: normal;
+    line-height: 1.7;
+  }
+
+  .register-banner {
+    background: linear-gradient(160deg, #25143a 0%, #4d2a73 100%);
+    color: #fffdf6;
+    border-radius: 28px;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    box-shadow: var(--shadow);
+  }
+  .register-banner h2 {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.35rem);
+  }
+  .register-banner p {
+    margin: 0;
+    color: rgba(255, 253, 246, 0.78);
+  }
+
+  .footer {
+    padding: 2rem 0 3rem;
+    color: #625d67;
+    text-align: center;
+  }
+  .footer-mark {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 0.8rem;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #f4e5b3, #d3aa47);
+    color: var(--plum);
+    display: grid;
+    place-items: center;
+    font-size: 1.2rem;
+  }
+  .footer-links {
+    margin-top: 0.9rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+  .footer-links a {
+    color: var(--plum-soft);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  @media (max-width: 900px) {
+    .hero-inner,
+    .about-grid,
+    .register-banner {
+      grid-template-columns: 1fr;
+    }
+    .hero-meta {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .nav-toggle { display: inline-flex; }
+    .nav-links {
+      display: none;
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      top: 72px;
+      flex-direction: column;
+      align-items: stretch;
+      background: rgba(28, 13, 44, 0.98);
+      border: 1px solid rgba(241, 220, 157, 0.2);
+      border-radius: 18px;
+      padding: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 0.35rem 0; }
+    .countdown-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .schedule-item { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <div class="brand-mark" aria-hidden="true">✝</div>
+      <div class="brand-copy">
+        <strong>Northern North Ministerial Council</strong>
+        <span>AOH Church of God</span>
+      </div>
+    </a>
+    <button id="navToggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="navLinks">Menu</button>
+    <nav>
+      <ul id="navLinks" class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#speakers">Speakers</a></li>
+        <li><a href="#workshops">Workshops</a></li>
+        <li><a href="#schedule">Schedule</a></li>
+        <li><a href="#venue">Venue</a></li>
+        <li><a class="cta-link" href="register.html">Register</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div id="heroEyebrow" class="eyebrow">AOH Church of God</div>
+        <h1 id="heroTitle">Northern North Ministerial Council</h1>
+        <p id="heroSubtitle" class="hero-subtitle">Walking together in faith, fellowship, and ministry preparation.</p>
+        <div class="hero-meta">
+          <div class="hero-meta-card">
+            <span>Date</span>
+            <strong id="heroDate">Saturday, October 18, 2025</strong>
+          </div>
+          <div class="hero-meta-card">
+            <span>Time</span>
+            <strong id="heroTime">9:00 AM - 5:00 PM</strong>
+          </div>
+          <div class="hero-meta-card">
+            <span>Location</span>
+            <strong id="heroLocation">Chicago, Illinois</strong>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <a id="heroRegisterCta" class="btn btn-primary" href="register.html">Register Now</a>
+          <a class="btn btn-secondary" href="#schedule">View Schedule</a>
+        </div>
+      </div>
+      <aside class="hero-panel">
+        <div class="countdown-card">
+          <h2>Conference Countdown</h2>
+          <p id="countdownSummary">The council gathering is approaching.</p>
+          <div class="countdown-grid">
+            <div class="countdown-unit"><strong id="daysValue">--</strong><span>Days</span></div>
+            <div class="countdown-unit"><strong id="hoursValue">--</strong><span>Hours</span></div>
+            <div class="countdown-unit"><strong id="minutesValue">--</strong><span>Minutes</span></div>
+            <div class="countdown-unit"><strong id="secondsValue">--</strong><span>Seconds</span></div>
+          </div>
+          <div id="countdownMessage" class="countdown-message">Conference date not yet configured.</div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <div class="shell">
+      <div class="section-head">
+        <span id="aboutLabel">Our Mission</span>
+        <h2 id="aboutTitle">About This Council</h2>
+      </div>
+      <div class="about-grid">
+        <div class="copy-card card">
+          <p id="aboutP1">The Northern North Ministerial Council exists to strengthen ministers, foster unity, and create room for prayerful leadership development across the region.</p>
+          <p id="aboutP2">This gathering brings pastors, elders, ministry leaders, and workers together for fellowship, preaching, practical instruction, and shared encouragement.</p>
+        </div>
+        <div class="quote-card card">
+          <strong>Guiding Scripture</strong>
+          <blockquote id="aboutQuote">"For the equipping of the saints for the work of ministry, for the edifying of the body of Christ."</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="speakers" class="section section-alt">
+    <div class="shell">
+      <div class="section-head">
+        <span>Featured Leaders</span>
+        <h2>Speakers and Leadership</h2>
+        <p>Lead speakers, special guests, and presiding voices can be updated from the admin panel and will appear here automatically.</p>
+      </div>
+      <div id="speakerGrid" class="speaker-grid"></div>
+    </div>
+  </section>
+
+  <section id="workshops" class="section">
+    <div class="shell">
+      <div class="section-head">
+        <span>Workshop Tracks</span>
+        <h2>Workshops and Facilitators</h2>
+        <p>Use this space for breakout sessions, ministry labs, and practical training with each facilitator clearly assigned.</p>
+      </div>
+      <div id="workshopGrid" class="workshop-grid"></div>
+    </div>
+  </section>
+
+  <section id="schedule" class="section section-alt">
+    <div class="shell">
+      <div class="section-head">
+        <span>Program</span>
+        <h2>Schedule</h2>
+      </div>
+      <div id="scheduleList" class="schedule-list"></div>
+    </div>
+  </section>
+
+  <section id="venue" class="section section-alt">
+    <div class="shell">
+      <div class="section-head">
+        <span>Venue and Contact</span>
+        <h2>Plan Your Visit</h2>
+      </div>
+      <div class="info-grid">
+        <div class="info-card card">
+          <h3>Venue</h3>
+          <address id="venueAddress">Northern North Assembly Hall<br>Chicago, Illinois</address>
+        </div>
+        <div class="info-card card">
+          <h3>Arrival</h3>
+          <p id="venueArrival">Doors open 30 minutes before the first session. Please arrive early for check-in and fellowship.</p>
+        </div>
+        <div class="info-card card">
+          <h3>Contact</h3>
+          <p><span id="venueEmail">council@example.org</span><br><span id="venuePhone">(000) 000-0000</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="register-banner">
+        <div>
+          <h2>Reserve Your Place</h2>
+          <p>Complete your registration now. The register page and admin dashboard share the same stored site settings.</p>
+        </div>
+        <a class="btn btn-primary" href="register.html">Open Registration</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer shell">
+  <div id="footerMark" class="footer-mark" aria-hidden="true">✝</div>
+  <div>Northern North Ministerial Council</div>
+  <div>AOH Church of God</div>
+  <div class="footer-links">
+    <a href="register.html">Registration</a>
+    <a href="admin.html">Admin Console</a>
+  </div>
+</footer>
+
+<script>
+  const DEFAULT_CONTENT = {
+    event: {
+      eyebrow: "AOH Church of God",
+      title: "Northern North Ministerial Council",
+      subtitle: "Three days of preaching, fellowship, and ministry development from Friday through Sunday.",
+      date: "Friday, October 17, 2025 - Sunday, October 19, 2025",
+      time: "Morning and Night Services Daily",
+      location: "Chicago, Illinois",
+      ctaText: "Register Now",
+      logoData: "",
+      countdownTarget: ""
+    },
+    about: {
+      label: "Our Mission",
+      title: "About This Council",
+      p1: "The Northern North Ministerial Council exists to strengthen ministers, foster unity, and create room for prayerful leadership development across the region.",
+      p2: "This gathering brings pastors, elders, ministry leaders, and workers together for fellowship, preaching, practical instruction, and shared encouragement.",
+      quote: "\"For the equipping of the saints for the work of ministry, for the edifying of the body of Christ.\""
+    },
+    speakers: [
+      { name: "Bishop Grace Holloway", role: "Presiding Bishop", photoData: "" },
+      { name: "Overseer Nathan Brooks", role: "Regional Overseer", photoData: "" },
+      { name: "Pastor Elise Carter", role: "Guest Speaker", photoData: "" },
+      { name: "Elder Marcus Dean", role: "Leadership Session", photoData: "" },
+      { name: "Pastor Naomi Fields", role: "Prayer and Worship", photoData: "" },
+      { name: "Minister Caleb Sutton", role: "Emerging Leaders Forum", photoData: "" },
+      { name: "Dr. Hannah Reeves", role: "Family Ministry Session", photoData: "" }
+    ],
+    workshops: [
+      { title: "Church Growth and Community Impact", facilitator: "Overseer Nathan Brooks", description: "Held after the morning preaching service with practical instruction on outreach planning, discipleship rhythm, and local church impact." },
+      { title: "Women in Ministry Leadership", facilitator: "Pastor Elise Carter", description: "A morning workshop track focused on leadership development, mentorship, and service across ministry settings." },
+      { title: "Next Generation Ministry Lab", facilitator: "Minister Caleb Sutton", description: "Scheduled after morning preaching for leaders building strong youth and young adult ministry structure." }
+    ],
+    schedule: [
+      { time: "Friday 10:00 AM", title: "Morning Preaching Service", speaker: "Featured Morning Speaker" },
+      { time: "Friday 12:00 PM", title: "Morning Workshops", speaker: "Workshop Facilitators" },
+      { time: "Friday 7:00 PM", title: "Night Preaching Service", speaker: "Featured Night Speaker" },
+      { time: "Saturday 10:00 AM", title: "Morning Preaching Service", speaker: "Featured Morning Speaker" },
+      { time: "Saturday 12:00 PM", title: "Morning Workshops", speaker: "Workshop Facilitators" },
+      { time: "Saturday 7:00 PM", title: "Night Preaching Service", speaker: "Featured Night Speaker" },
+      { time: "Sunday 10:00 AM", title: "Morning Preaching Service", speaker: "Featured Morning Speaker" },
+      { time: "Sunday 12:00 PM", title: "Morning Workshops", speaker: "Workshop Facilitators" },
+      { time: "Sunday 6:00 PM", title: "Closing Night Service", speaker: "Featured Night Speaker" }
+    ],
+    venue: {
+      name: "Northern North Assembly Hall",
+      address: "123 Ministry Lane",
+      cityState: "Chicago, Illinois",
+      email: "council@example.org",
+      phone: "(000) 000-0000",
+      arrival: "Doors open 30 minutes before the first session. Please arrive early for check-in and fellowship."
+    },
+    pricing: {
+      earlyLabel: "Early Registration",
+      earlyPrice: "25",
+      regularLabel: "Regular Registration",
+      regularPrice: "35",
+      paymentMethods: "CashApp, Zelle, Pay at door"
+    }
+  };
+
+  function getContent() {
+    try {
+      const stored = JSON.parse(localStorage.getItem("nnmc_site_content") || "null");
+      if (!stored) return structuredClone(DEFAULT_CONTENT);
+      return {
+        event: { ...DEFAULT_CONTENT.event, ...(stored.event || {}) },
+        about: { ...DEFAULT_CONTENT.about, ...(stored.about || {}) },
+        speakers: Array.isArray(stored.speakers) && stored.speakers.length
+          ? stored.speakers.map((speaker, index) => ({ ...DEFAULT_CONTENT.speakers[index % DEFAULT_CONTENT.speakers.length], ...speaker }))
+          : DEFAULT_CONTENT.speakers,
+        workshops: Array.isArray(stored.workshops) && stored.workshops.length ? stored.workshops : DEFAULT_CONTENT.workshops,
+        schedule: Array.isArray(stored.schedule) && stored.schedule.length ? stored.schedule : DEFAULT_CONTENT.schedule,
+        venue: { ...DEFAULT_CONTENT.venue, ...(stored.venue || {}) },
+        pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
+      };
+    } catch {
+      return structuredClone(DEFAULT_CONTENT);
+    }
+  }
+
+  function setText(id, value) {
+    const node = document.getElementById(id);
+    if (node) node.textContent = value;
+  }
+
+  function renderPage() {
+    const content = getContent();
+    applyLogo(content.event.logoData);
+    setText("heroEyebrow", content.event.eyebrow);
+    setText("heroTitle", content.event.title);
+    setText("heroSubtitle", content.event.subtitle);
+    setText("heroDate", content.event.date);
+    setText("heroTime", content.event.time);
+    setText("heroLocation", content.event.location);
+    setText("aboutLabel", content.about.label);
+    setText("aboutTitle", content.about.title);
+    setText("aboutP1", content.about.p1);
+    setText("aboutP2", content.about.p2);
+    setText("aboutQuote", content.about.quote);
+    setText("venueAddress", [content.venue.name, content.venue.address, content.venue.cityState].filter(Boolean).join("\n"));
+    setText("venueArrival", content.venue.arrival);
+    setText("venueEmail", content.venue.email);
+    setText("venuePhone", content.venue.phone);
+    setText("heroRegisterCta", content.event.ctaText);
+
+    const speakerGrid = document.getElementById("speakerGrid");
+    speakerGrid.innerHTML = content.speakers.map((speaker) => `
+      <article class="speaker-card card">
+        <div class="speaker-seal">${speaker.photoData ? `<img src="${speaker.photoData}" alt="${escapeHtml(speaker.name || "Speaker")}">` : "✝"}</div>
+        <h3>${escapeHtml(speaker.name || "")}</h3>
+        <p>${escapeHtml(speaker.role || "")}</p>
+      </article>
+    `).join("");
+
+    const workshopGrid = document.getElementById("workshopGrid");
+    workshopGrid.innerHTML = content.workshops.map((workshop) => `
+      <article class="workshop-card card">
+        <strong>${escapeHtml(workshop.title || "")}</strong>
+        <span>${escapeHtml(workshop.facilitator || "")}</span>
+        <p>${escapeHtml(workshop.description || "")}</p>
+      </article>
+    `).join("");
+
+    const scheduleList = document.getElementById("scheduleList");
+    scheduleList.innerHTML = content.schedule.map((item) => `
+      <article class="schedule-item card">
+        <div class="schedule-time">${escapeHtml(item.time || "")}</div>
+        <div class="schedule-details">
+          <strong>${escapeHtml(item.title || "")}</strong>
+          ${item.speaker ? `<span>${escapeHtml(item.speaker)}</span>` : ""}
+        </div>
+      </article>
+    `).join("");
+
+    startCountdown(content.event.countdownTarget);
+  }
+
+  function applyLogo(logoData) {
+    const brandMark = document.querySelector(".brand-mark");
+    const footerMark = document.getElementById("footerMark");
+    if (!logoData) {
+      brandMark.innerHTML = "✝";
+      footerMark.innerHTML = "✝";
+      return;
+    }
+    brandMark.innerHTML = `<img src="${logoData}" alt="Northern North Ministerial Council logo">`;
+    footerMark.innerHTML = `<img src="${logoData}" alt="">`;
+  }
+
+  function startCountdown(targetValue) {
+    const daysNode = document.getElementById("daysValue");
+    const hoursNode = document.getElementById("hoursValue");
+    const minutesNode = document.getElementById("minutesValue");
+    const secondsNode = document.getElementById("secondsValue");
+    const summaryNode = document.getElementById("countdownSummary");
+    const messageNode = document.getElementById("countdownMessage");
+
+    function updateDisplay(days, hours, minutes, seconds) {
+      daysNode.textContent = String(days).padStart(2, "0");
+      hoursNode.textContent = String(hours).padStart(2, "0");
+      minutesNode.textContent = String(minutes).padStart(2, "0");
+      secondsNode.textContent = String(seconds).padStart(2, "0");
+    }
+
+    function tick() {
+      if (!targetValue) {
+        updateDisplay("--", "--", "--", "--");
+        summaryNode.textContent = "The council gathering is approaching.";
+        messageNode.textContent = "Conference date not yet configured.";
+        return;
+      }
+
+      const target = new Date(targetValue);
+      if (Number.isNaN(target.getTime())) {
+        updateDisplay("--", "--", "--", "--");
+        messageNode.textContent = "Conference date is invalid.";
+        return;
+      }
+
+      const delta = target.getTime() - Date.now();
+      summaryNode.textContent = target.toLocaleString();
+
+      if (delta <= 0) {
+        updateDisplay("00", "00", "00", "00");
+        messageNode.textContent = "The conference has begun.";
+        return;
+      }
+
+      const days = Math.floor(delta / 86400000);
+      const hours = Math.floor((delta % 86400000) / 3600000);
+      const minutes = Math.floor((delta % 3600000) / 60000);
+      const seconds = Math.floor((delta % 60000) / 1000);
+      updateDisplay(days, hours, minutes, seconds);
+      messageNode.textContent = "Make plans now and register before arrival.";
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  const navToggle = document.getElementById("navToggle");
+  const navLinks = document.getElementById("navLinks");
+  navToggle.addEventListener("click", () => {
+    const open = navLinks.classList.toggle("open");
+    navToggle.setAttribute("aria-expanded", String(open));
+  });
+  navLinks.addEventListener("click", (event) => {
+    if (event.target.tagName === "A") {
+      navLinks.classList.remove("open");
+      navToggle.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  renderPage();
+</script>
+</body>
+</html>

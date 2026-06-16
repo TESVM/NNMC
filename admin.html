@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Northern North Ministerial Council</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1d1b2a;
+    --plum: #2a163f;
+    --plum-soft: #4d2a73;
+    --gold: #d3aa47;
+    --paper: #faf6ed;
+    --mist: #f1eadc;
+    --panel: #ffffff;
+    --line: #ddd2bd;
+    --danger: #b74040;
+    --success: #2d7758;
+    --font-display: "Cinzel", serif;
+    --font-body: "Source Sans 3", sans-serif;
+    --shadow: 0 24px 60px rgba(24, 14, 37, 0.14);
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: linear-gradient(180deg, #fbf7ef 0%, #efe7d7 100%);
+  }
+  button, input, textarea, select { font: inherit; }
+  a { color: inherit; text-decoration: none; }
+
+  .login-screen {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: radial-gradient(circle at top left, rgba(211, 170, 71, 0.18), transparent 20%), linear-gradient(155deg, #12091d 0%, #2a163f 55%, #56347f 100%);
+  }
+  .login-card,
+  .panel {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(221, 210, 189, 0.9);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+  }
+  .login-card {
+    width: min(420px, 100%);
+    padding: 2rem;
+  }
+  .login-card h1 {
+    margin: 0 0 0.55rem;
+    font-family: var(--font-display);
+    color: var(--plum);
+    font-size: 1.4rem;
+    text-transform: uppercase;
+  }
+  .login-card p {
+    margin: 0 0 1.25rem;
+    color: #625d67;
+  }
+
+  .field {
+    margin-bottom: 0.9rem;
+  }
+  .field label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--plum-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 0.78rem 0.9rem;
+    border-radius: 12px;
+    border: 1px solid #d7ccb8;
+    background: #fffdfa;
+  }
+  .field textarea {
+    min-height: 88px;
+    resize: vertical;
+  }
+  .upload-preview {
+    width: 88px;
+    height: 88px;
+    margin-top: 0.75rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: #fffdfa;
+    object-fit: cover;
+    display: none;
+  }
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 46px;
+    padding: 0.85rem 1.15rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: var(--gold);
+    color: var(--plum);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .btn-secondary {
+    background: transparent;
+    border-color: rgba(42, 22, 63, 0.2);
+    color: var(--plum);
+  }
+  .btn-danger {
+    background: #fff1f1;
+    color: var(--danger);
+    border-color: rgba(183, 64, 64, 0.25);
+  }
+
+  .login-error {
+    display: none;
+    margin-top: 0.75rem;
+    color: var(--danger);
+    font-weight: 600;
+  }
+
+  .app {
+    display: none;
+  }
+  .shell {
+    width: min(1160px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 1.4rem 0 2rem;
+  }
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+  .topbar h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    color: var(--plum);
+    font-size: clamp(1.5rem, 3vw, 2.3rem);
+    text-transform: uppercase;
+  }
+  .topbar p {
+    margin: 0.35rem 0 0;
+    color: #655f68;
+  }
+  .topbar-actions {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  .stat {
+    padding: 1.2rem;
+  }
+  .stat span {
+    display: block;
+    color: var(--plum-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.72rem;
+    margin-bottom: 0.5rem;
+  }
+  .stat strong {
+    display: block;
+    font-family: var(--font-display);
+    color: var(--plum);
+    font-size: 2rem;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 1rem;
+  }
+  .sidebar {
+    padding: 1rem;
+    align-self: start;
+    position: sticky;
+    top: 1rem;
+  }
+  .sidebar button {
+    width: 100%;
+    justify-content: flex-start;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #5f5966;
+    margin-bottom: 0.45rem;
+  }
+  .sidebar button.active {
+    background: rgba(77, 42, 115, 0.08);
+    border-color: rgba(77, 42, 115, 0.14);
+    color: var(--plum);
+  }
+
+  .main-panels {
+    display: grid;
+    gap: 1rem;
+  }
+  .panel {
+    padding: 1.2rem;
+  }
+  .panel h2 {
+    margin: 0 0 1rem;
+    font-family: var(--font-display);
+    color: var(--plum);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .hidden { display: none; }
+
+  .speaker-row,
+  .schedule-row,
+  .workshop-row {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    align-items: start;
+  }
+  .speaker-row { grid-template-columns: 1fr 1fr 120px 120px auto; }
+  .schedule-row { grid-template-columns: 140px 1fr 1fr auto; }
+  .workshop-row { grid-template-columns: 1fr 1fr 1.4fr auto; }
+  .speaker-preview {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    object-fit: cover;
+    background: #fffdfa;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 0.75rem 0.7rem;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    color: var(--plum-soft);
+    font-size: 0.73rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  td { color: #5d5764; }
+  .table-wrap { overflow-x: auto; }
+
+  .toast {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 30;
+    padding: 0.95rem 1.1rem;
+    border-radius: 14px;
+    color: #fff;
+    background: var(--success);
+    box-shadow: var(--shadow);
+    display: none;
+  }
+  .toast.show { display: block; }
+
+  @media (max-width: 980px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; }
+  }
+
+  @media (max-width: 720px) {
+    .field-grid,
+    .speaker-row,
+    .schedule-row,
+    .workshop-row {
+      grid-template-columns: 1fr;
+    }
+    .stats { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<section id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <h1>Admin Access</h1>
+    <p>Default login is <strong>admin</strong> with password <strong>nnmc2025</strong> until you change it below.</p>
+    <div class="field">
+      <label for="username">Username</label>
+      <input id="username" autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password">
+    </div>
+    <button id="loginButton" class="btn" type="button">Sign In</button>
+    <div id="loginError" class="login-error">Invalid username or password.</div>
+  </div>
+</section>
+
+<div id="app" class="app">
+  <div class="shell">
+    <header class="topbar">
+      <div>
+        <h1>Site Admin</h1>
+        <p>Manage site content, registration pricing, countdown timing, and stored registrations.</p>
+      </div>
+      <div class="topbar-actions">
+        <a class="btn btn-secondary" href="index.html">View Site</a>
+        <button id="logoutButton" class="btn btn-secondary" type="button">Sign Out</button>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div class="panel stat"><span>Total Registrations</span><strong id="statTotal">0</strong></div>
+      <div class="panel stat"><span>Early Tier</span><strong id="statEarly">0</strong></div>
+      <div class="panel stat"><span>Regular Tier</span><strong id="statRegular">0</strong></div>
+      <div class="panel stat"><span>Unique Churches</span><strong id="statChurches">0</strong></div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar panel">
+        <button class="btn active" data-tab="content" type="button">Content</button>
+        <button class="btn" data-tab="speakers" type="button">Speakers</button>
+        <button class="btn" data-tab="workshops" type="button">Workshops</button>
+        <button class="btn" data-tab="schedule" type="button">Schedule</button>
+        <button class="btn" data-tab="registrations" type="button">Registrations</button>
+        <button class="btn" data-tab="security" type="button">Security</button>
+      </aside>
+
+      <main class="main-panels">
+        <section id="panel-content" class="panel">
+          <h2>Site Content</h2>
+          <div class="field-grid">
+            <div class="field">
+              <label for="eventEyebrow">Event Eyebrow</label>
+              <input id="eventEyebrow">
+            </div>
+            <div class="field">
+              <label for="eventCtaText">Homepage CTA Text</label>
+              <input id="eventCtaText">
+            </div>
+          </div>
+          <div class="field">
+            <label for="eventLogo">Logo Upload</label>
+            <input id="eventLogo" type="file" accept="image/*">
+            <img id="logoPreview" class="upload-preview" alt="Logo preview">
+          </div>
+          <div class="field">
+            <label for="eventTitle">Event Title</label>
+            <input id="eventTitle">
+          </div>
+          <div class="field">
+            <label for="eventSubtitle">Event Subtitle</label>
+            <textarea id="eventSubtitle"></textarea>
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="eventDate">Date</label>
+              <input id="eventDate">
+            </div>
+            <div class="field">
+              <label for="eventTime">Time</label>
+              <input id="eventTime">
+            </div>
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="eventLocation">Location</label>
+              <input id="eventLocation">
+            </div>
+            <div class="field">
+              <label for="countdownTarget">Countdown Target</label>
+              <input id="countdownTarget" type="datetime-local">
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="aboutLabel">About Label</label>
+              <input id="aboutLabel">
+            </div>
+            <div class="field">
+              <label for="aboutTitle">About Title</label>
+              <input id="aboutTitle">
+            </div>
+          </div>
+          <div class="field">
+            <label for="aboutP1">About Paragraph 1</label>
+            <textarea id="aboutP1"></textarea>
+          </div>
+          <div class="field">
+            <label for="aboutP2">About Paragraph 2</label>
+            <textarea id="aboutP2"></textarea>
+          </div>
+          <div class="field">
+            <label for="aboutQuote">Scripture / Quote</label>
+            <textarea id="aboutQuote"></textarea>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="venueName">Venue Name</label>
+              <input id="venueName">
+            </div>
+            <div class="field">
+              <label for="venueAddress">Venue Address</label>
+              <input id="venueAddress">
+            </div>
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="venueCityState">City / State</label>
+              <input id="venueCityState">
+            </div>
+            <div class="field">
+              <label for="venuePhone">Phone</label>
+              <input id="venuePhone">
+            </div>
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="venueEmail">Email</label>
+              <input id="venueEmail">
+            </div>
+            <div class="field">
+              <label for="paymentMethods">Payment Methods</label>
+              <input id="paymentMethods">
+            </div>
+          </div>
+          <div class="field">
+            <label for="venueArrival">Arrival Notes</label>
+            <textarea id="venueArrival"></textarea>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="earlyLabel">Early Tier Label</label>
+              <input id="earlyLabel">
+            </div>
+            <div class="field">
+              <label for="earlyPrice">Early Tier Price</label>
+              <input id="earlyPrice">
+            </div>
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="regularLabel">Regular Tier Label</label>
+              <input id="regularLabel">
+            </div>
+            <div class="field">
+              <label for="regularPrice">Regular Tier Price</label>
+              <input id="regularPrice">
+            </div>
+          </div>
+
+          <button id="saveContentButton" class="btn" type="button">Save Content</button>
+        </section>
+
+        <section id="panel-speakers" class="panel hidden">
+          <h2>Speakers</h2>
+          <div id="speakerRows"></div>
+          <div class="topbar-actions">
+            <button id="addSpeakerButton" class="btn btn-secondary" type="button">Add Speaker</button>
+            <button id="saveSpeakersButton" class="btn" type="button">Save Speakers</button>
+          </div>
+        </section>
+
+        <section id="panel-workshops" class="panel hidden">
+          <h2>Workshops</h2>
+          <div id="workshopRows"></div>
+          <div class="topbar-actions">
+            <button id="addWorkshopButton" class="btn btn-secondary" type="button">Add Workshop</button>
+            <button id="saveWorkshopsButton" class="btn" type="button">Save Workshops</button>
+          </div>
+        </section>
+
+        <section id="panel-schedule" class="panel hidden">
+          <h2>Schedule</h2>
+          <div id="scheduleRows"></div>
+          <div class="topbar-actions">
+            <button id="addScheduleButton" class="btn btn-secondary" type="button">Add Schedule Row</button>
+            <button id="saveScheduleButton" class="btn" type="button">Save Schedule</button>
+          </div>
+        </section>
+
+        <section id="panel-registrations" class="panel hidden">
+          <h2>Registrations</h2>
+          <div class="topbar-actions" style="margin-bottom: 1rem;">
+            <button id="exportCsvButton" class="btn btn-secondary" type="button">Export CSV</button>
+            <button id="clearRegistrationsButton" class="btn btn-danger" type="button">Clear All</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Church</th>
+                  <th>Role</th>
+                  <th>Tier</th>
+                  <th>Phone</th>
+                  <th>Payment</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="registrationBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="panel-security" class="panel hidden">
+          <h2>Security</h2>
+          <div class="field">
+            <label for="adminUsername">Username</label>
+            <input id="adminUsername">
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="newPassword">New Password</label>
+              <input id="newPassword" type="password">
+            </div>
+            <div class="field">
+              <label for="confirmPassword">Confirm Password</label>
+              <input id="confirmPassword" type="password">
+            </div>
+          </div>
+          <button id="saveCredentialsButton" class="btn" type="button">Save Credentials</button>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  const DEFAULT_CONTENT = {
+    event: {
+      eyebrow: "AOH Church of God",
+      title: "Northern North Ministerial Council",
+      subtitle: "Three days of preaching, fellowship, and ministry development from Friday through Sunday.",
+      date: "Friday, October 17, 2025 - Sunday, October 19, 2025",
+      time: "Morning and Night Services Daily",
+      location: "Chicago, Illinois",
+      ctaText: "Register Now",
+      logoData: "",
+      countdownTarget: ""
+    },
+    about: {
+      label: "Our Mission",
+      title: "About This Council",
+      p1: "The Northern North Ministerial Council exists to strengthen ministers, foster unity, and create room for prayerful leadership development across the region.",
+      p2: "This gathering brings pastors, elders, ministry leaders, and workers together for fellowship, preaching, practical instruction, and shared encouragement.",
+      quote: "\"For the equipping of the saints for the work of ministry, for the edifying of the body of Christ.\""
+    },
+    speakers: [
+      { name: "Bishop Grace Holloway", role: "Presiding Bishop", photoData: "" },
+      { name: "Overseer Nathan Brooks", role: "Regional Overseer", photoData: "" },
+      { name: "Pastor Elise Carter", role: "Guest Speaker", photoData: "" },
+      { name: "Elder Marcus Dean", role: "Leadership Session", photoData: "" },
+      { name: "Pastor Naomi Fields", role: "Prayer and Worship", photoData: "" },
+      { name: "Minister Caleb Sutton", role: "Emerging Leaders Forum", photoData: "" },
+      { name: "Dr. Hannah Reeves", role: "Family Ministry Session", photoData: "" }
+    ],
+    workshops: [
+      { title: "Church Growth and Community Impact", facilitator: "Overseer Nathan Brooks", description: "Held after the morning preaching service with practical instruction on outreach planning, discipleship rhythm, and local church impact." },
+      { title: "Women in Ministry Leadership", facilitator: "Pastor Elise Carter", description: "A morning workshop track focused on leadership development, mentorship, and service across ministry settings." },
+      { title: "Next Generation Ministry Lab", facilitator: "Minister Caleb Sutton", description: "Scheduled after morning preaching for leaders building strong youth and young adult ministry structure." }
+    ],
+    schedule: [
+      { time: "Friday 10:00 AM", title: "Morning Preaching Service", speaker: "Featured Morning Speaker" },
+      { time: "Friday 12:00 PM", title: "Morning Workshops", speaker: "Workshop Facilitators" },
+      { time: "Friday 7:00 PM", title: "Night Preaching Service", speaker: "Featured Night Speaker" },
+      { time: "Saturday 10:00 AM", title: "Morning Preaching Service", speaker: "Featured Morning Speaker" },
+      { time: "Saturday 12:00 PM", title: "Morning Workshops", speaker: "Workshop Facilitators" },
+      { time: "Saturday 7:00 PM", title: "Night Preaching Service", speaker: "Featured Night Speaker" },
+      { time: "Sunday 10:00 AM", title: "Morning Preaching Service", speaker: "Featured Morning Speaker" },
+      { time: "Sunday 12:00 PM", title: "Morning Workshops", speaker: "Workshop Facilitators" },
+      { time: "Sunday 6:00 PM", title: "Closing Night Service", speaker: "Featured Night Speaker" }
+    ],
+    venue: {
+      name: "Northern North Assembly Hall",
+      address: "123 Ministry Lane",
+      cityState: "Chicago, Illinois",
+      email: "council@example.org",
+      phone: "(000) 000-0000",
+      arrival: "Doors open 30 minutes before the first session. Please arrive early for check-in and fellowship."
+    },
+    pricing: {
+      earlyLabel: "Early Registration",
+      earlyPrice: "25",
+      regularLabel: "Regular Registration",
+      regularPrice: "35",
+      paymentMethods: "CashApp, Zelle, Pay at door"
+    }
+  };
+
+  const DEFAULT_CREDS = { username: "admin", password: "nnmc2025" };
+
+  function getContent() {
+    try {
+      const stored = JSON.parse(localStorage.getItem("nnmc_site_content") || "null");
+      if (!stored) return structuredClone(DEFAULT_CONTENT);
+      return {
+        event: { ...DEFAULT_CONTENT.event, ...(stored.event || {}) },
+        about: { ...DEFAULT_CONTENT.about, ...(stored.about || {}) },
+        speakers: Array.isArray(stored.speakers) && stored.speakers.length
+          ? stored.speakers.map((speaker, index) => ({ ...structuredClone(DEFAULT_CONTENT.speakers[index % DEFAULT_CONTENT.speakers.length]), ...speaker }))
+          : structuredClone(DEFAULT_CONTENT.speakers),
+        workshops: Array.isArray(stored.workshops) && stored.workshops.length ? stored.workshops : structuredClone(DEFAULT_CONTENT.workshops),
+        schedule: Array.isArray(stored.schedule) && stored.schedule.length ? stored.schedule : structuredClone(DEFAULT_CONTENT.schedule),
+        venue: { ...DEFAULT_CONTENT.venue, ...(stored.venue || {}) },
+        pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
+      };
+    } catch {
+      return structuredClone(DEFAULT_CONTENT);
+    }
+  }
+
+  function setContent(content) {
+    try {
+      localStorage.setItem("nnmc_site_content", JSON.stringify(content));
+      return true;
+    } catch (error) {
+      const isQuotaError = error && (
+        error.name === "QuotaExceededError" ||
+        error.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+        error.code === 22 ||
+        error.code === 1014
+      );
+      showToast(isQuotaError ? "Storage is full. Use smaller images or fewer uploads." : "Unable to save site content.", true);
+      return false;
+    }
+  }
+
+  function getCredentials() {
+    try {
+      return JSON.parse(localStorage.getItem("nnmc_admin_credentials") || "null") || { ...DEFAULT_CREDS };
+    } catch {
+      return { ...DEFAULT_CREDS };
+    }
+  }
+
+  function setCredentials(credentials) {
+    try {
+      localStorage.setItem("nnmc_admin_credentials", JSON.stringify(credentials));
+      return true;
+    } catch {
+      showToast("Unable to save credentials.", true);
+      return false;
+    }
+  }
+
+  function getRegistrations() {
+    try {
+      const stored = JSON.parse(localStorage.getItem("nnmc_registrations") || "[]");
+      return Array.isArray(stored) ? stored : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function setRegistrations(registrations) {
+    try {
+      localStorage.setItem("nnmc_registrations", JSON.stringify(registrations));
+      return true;
+    } catch {
+      showToast("Unable to save registrations.", true);
+      return false;
+    }
+  }
+
+  function showToast(message, isError = false) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.style.background = isError ? "var(--danger)" : "var(--success)";
+    toast.classList.add("show");
+    clearTimeout(showToast.timeoutId);
+    showToast.timeoutId = setTimeout(() => toast.classList.remove("show"), 2800);
+  }
+
+  function login() {
+    const creds = getCredentials();
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+    const matches = username === creds.username && password === creds.password;
+
+    document.getElementById("loginError").style.display = matches ? "none" : "block";
+    if (!matches) return;
+
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    loadAdmin();
+  }
+
+  function logout() {
+    document.getElementById("app").style.display = "none";
+    document.getElementById("loginScreen").style.display = "grid";
+    document.getElementById("password").value = "";
+  }
+
+  function loadAdmin() {
+    const content = getContent();
+    const creds = getCredentials();
+
+    document.getElementById("eventEyebrow").value = content.event.eyebrow;
+    document.getElementById("eventCtaText").value = content.event.ctaText;
+    document.getElementById("eventTitle").value = content.event.title;
+    document.getElementById("eventSubtitle").value = content.event.subtitle;
+    document.getElementById("eventDate").value = content.event.date;
+    document.getElementById("eventTime").value = content.event.time;
+    document.getElementById("eventLocation").value = content.event.location;
+    document.getElementById("countdownTarget").value = toLocalDateTimeValue(content.event.countdownTarget);
+    renderLogoPreview(content.event.logoData);
+
+    document.getElementById("aboutLabel").value = content.about.label;
+    document.getElementById("aboutTitle").value = content.about.title;
+    document.getElementById("aboutP1").value = content.about.p1;
+    document.getElementById("aboutP2").value = content.about.p2;
+    document.getElementById("aboutQuote").value = content.about.quote;
+
+    document.getElementById("venueName").value = content.venue.name;
+    document.getElementById("venueAddress").value = content.venue.address;
+    document.getElementById("venueCityState").value = content.venue.cityState;
+    document.getElementById("venueEmail").value = content.venue.email;
+    document.getElementById("venuePhone").value = content.venue.phone;
+    document.getElementById("venueArrival").value = content.venue.arrival;
+
+    document.getElementById("paymentMethods").value = content.pricing.paymentMethods;
+    document.getElementById("earlyLabel").value = content.pricing.earlyLabel;
+    document.getElementById("earlyPrice").value = content.pricing.earlyPrice;
+    document.getElementById("regularLabel").value = content.pricing.regularLabel;
+    document.getElementById("regularPrice").value = content.pricing.regularPrice;
+
+    document.getElementById("adminUsername").value = creds.username;
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+
+    renderSpeakers(content.speakers);
+    renderWorkshops(content.workshops);
+    renderSchedule(content.schedule);
+    renderRegistrations();
+    renderStats();
+  }
+
+  function renderStats() {
+    const registrations = getRegistrations();
+    const churches = new Set(registrations.map((item) => item.church).filter(Boolean));
+    document.getElementById("statTotal").textContent = registrations.length;
+    document.getElementById("statEarly").textContent = registrations.filter((item) => item.tier === "early").length;
+    document.getElementById("statRegular").textContent = registrations.filter((item) => item.tier === "regular").length;
+    document.getElementById("statChurches").textContent = churches.size;
+  }
+
+  function renderSpeakers(speakers) {
+    const container = document.getElementById("speakerRows");
+    container.innerHTML = speakers.map((speaker, index) => `
+      <div class="speaker-row" data-index="${index}">
+        <input class="speaker-name" value="${escapeAttribute(speaker.name || "")}" placeholder="Speaker name">
+        <input class="speaker-role" value="${escapeAttribute(speaker.role || "")}" placeholder="Speaker role">
+        <input class="speaker-photo-input" type="file" accept="image/*" onchange="handleSpeakerPhotoUpload(event, ${index})">
+        <img class="speaker-preview" src="${speaker.photoData || ""}" alt="" style="${speaker.photoData ? "" : "display:none;"}">
+        <button class="btn btn-danger" type="button" onclick="removeSpeakerRow(${index})">Remove</button>
+      </div>
+    `).join("");
+  }
+
+  function renderSchedule(schedule) {
+    const container = document.getElementById("scheduleRows");
+    container.innerHTML = schedule.map((item, index) => `
+      <div class="schedule-row" data-index="${index}">
+        <input class="schedule-time" value="${escapeAttribute(item.time || "")}" placeholder="Time">
+        <input class="schedule-title" value="${escapeAttribute(item.title || "")}" placeholder="Title">
+        <input class="schedule-speaker" value="${escapeAttribute(item.speaker || "")}" placeholder="Speaker">
+        <button class="btn btn-danger" type="button" onclick="removeScheduleRow(${index})">Remove</button>
+      </div>
+    `).join("");
+  }
+
+  function renderWorkshops(workshops) {
+    const container = document.getElementById("workshopRows");
+    container.innerHTML = workshops.map((item, index) => `
+      <div class="workshop-row" data-index="${index}">
+        <input class="workshop-title" value="${escapeAttribute(item.title || "")}" placeholder="Workshop title">
+        <input class="workshop-facilitator" value="${escapeAttribute(item.facilitator || "")}" placeholder="Facilitator">
+        <input class="workshop-description" value="${escapeAttribute(item.description || "")}" placeholder="Short description">
+        <button class="btn btn-danger" type="button" onclick="removeWorkshopRow(${index})">Remove</button>
+      </div>
+    `).join("");
+  }
+
+  function renderRegistrations() {
+    const body = document.getElementById("registrationBody");
+    const registrations = getRegistrations();
+
+    if (!registrations.length) {
+      body.innerHTML = `<tr><td colspan="8">No registrations saved on this device.</td></tr>`;
+      return;
+    }
+
+    body.innerHTML = registrations.map((item, index) => `
+      <tr>
+        <td>${escapeHtml(item.fullName || "")}</td>
+        <td>${escapeHtml(item.church || "")}</td>
+        <td>${escapeHtml(item.clergyRole || "")}</td>
+        <td>${escapeHtml(item.tier || "")}</td>
+        <td>${escapeHtml(item.phone || "")}</td>
+        <td>${escapeHtml(item.paymentMethod || "")}</td>
+        <td>${item.createdAt ? new Date(item.createdAt).toLocaleString() : ""}</td>
+        <td><button class="btn btn-danger" type="button" onclick="deleteRegistration(${index})">Delete</button></td>
+      </tr>
+    `).join("");
+  }
+
+  function saveContent() {
+    const content = getContent();
+    content.event = {
+      eyebrow: document.getElementById("eventEyebrow").value.trim(),
+      ctaText: document.getElementById("eventCtaText").value.trim(),
+      title: document.getElementById("eventTitle").value.trim(),
+      subtitle: document.getElementById("eventSubtitle").value.trim(),
+      date: document.getElementById("eventDate").value.trim(),
+      time: document.getElementById("eventTime").value.trim(),
+      location: document.getElementById("eventLocation").value.trim(),
+      logoData: currentLogoData,
+      countdownTarget: fromLocalDateTimeValue(document.getElementById("countdownTarget").value)
+    };
+    content.about = {
+      label: document.getElementById("aboutLabel").value.trim(),
+      title: document.getElementById("aboutTitle").value.trim(),
+      p1: document.getElementById("aboutP1").value.trim(),
+      p2: document.getElementById("aboutP2").value.trim(),
+      quote: document.getElementById("aboutQuote").value.trim()
+    };
+    content.venue = {
+      name: document.getElementById("venueName").value.trim(),
+      address: document.getElementById("venueAddress").value.trim(),
+      cityState: document.getElementById("venueCityState").value.trim(),
+      email: document.getElementById("venueEmail").value.trim(),
+      phone: document.getElementById("venuePhone").value.trim(),
+      arrival: document.getElementById("venueArrival").value.trim()
+    };
+    content.pricing = {
+      paymentMethods: document.getElementById("paymentMethods").value.trim(),
+      earlyLabel: document.getElementById("earlyLabel").value.trim(),
+      earlyPrice: document.getElementById("earlyPrice").value.trim(),
+      regularLabel: document.getElementById("regularLabel").value.trim(),
+      regularPrice: document.getElementById("regularPrice").value.trim()
+    };
+    if (!setContent(content)) return;
+    showToast("Content saved.");
+  }
+
+  function saveSpeakers() {
+    const content = getContent();
+    const rows = [...document.querySelectorAll("#speakerRows .speaker-row")];
+    content.speakers = rows.map((row) => ({
+      name: row.querySelector(".speaker-name").value.trim(),
+      role: row.querySelector(".speaker-role").value.trim(),
+      photoData: row.querySelector(".speaker-preview").getAttribute("src") || ""
+    })).filter((speaker) => speaker.name || speaker.role);
+    if (!setContent(content)) return;
+    renderSpeakers(content.speakers);
+    showToast("Speakers saved.");
+  }
+
+  function saveSchedule() {
+    const content = getContent();
+    const rows = [...document.querySelectorAll("#scheduleRows .schedule-row")];
+    content.schedule = rows.map((row) => ({
+      time: row.querySelector(".schedule-time").value.trim(),
+      title: row.querySelector(".schedule-title").value.trim(),
+      speaker: row.querySelector(".schedule-speaker").value.trim()
+    })).filter((item) => item.time || item.title || item.speaker);
+    if (!setContent(content)) return;
+    renderSchedule(content.schedule);
+    showToast("Schedule saved.");
+  }
+
+  function saveWorkshops() {
+    const content = getContent();
+    const rows = [...document.querySelectorAll("#workshopRows .workshop-row")];
+    content.workshops = rows.map((row) => ({
+      title: row.querySelector(".workshop-title").value.trim(),
+      facilitator: row.querySelector(".workshop-facilitator").value.trim(),
+      description: row.querySelector(".workshop-description").value.trim()
+    })).filter((item) => item.title || item.facilitator || item.description);
+    if (!setContent(content)) return;
+    renderWorkshops(content.workshops);
+    showToast("Workshops saved.");
+  }
+
+  function saveCredentials() {
+    const username = document.getElementById("adminUsername").value.trim();
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (!username) {
+      showToast("Username is required.", true);
+      return;
+    }
+    if (!newPassword || newPassword.length < 6) {
+      showToast("Password must be at least 6 characters.", true);
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      showToast("Passwords do not match.", true);
+      return;
+    }
+
+    if (!setCredentials({ username, password: newPassword })) return;
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+    showToast("Credentials updated.");
+  }
+
+  function deleteRegistration(index) {
+    const registrations = getRegistrations();
+    registrations.splice(index, 1);
+    if (!setRegistrations(registrations)) return;
+    renderRegistrations();
+    renderStats();
+    showToast("Registration deleted.");
+  }
+
+  function clearRegistrations() {
+    if (!confirm("Clear all saved registrations on this device?")) return;
+    if (!setRegistrations([])) return;
+    renderRegistrations();
+    renderStats();
+    showToast("All registrations cleared.");
+  }
+
+  function exportCsv() {
+    const registrations = getRegistrations();
+    if (!registrations.length) {
+      showToast("No registrations to export.", true);
+      return;
+    }
+
+    const headers = ["fullName", "email", "phone", "church", "pastor", "clergyRole", "tier", "address", "cityState", "paymentMethod", "notes", "createdAt"];
+    const rows = [
+      headers.join(","),
+      ...registrations.map((entry) => headers.map((key) => csvEscape(entry[key] || "")).join(","))
+    ];
+
+    const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "nnmc-registrations.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function csvEscape(value) {
+    const safe = String(value).replaceAll('"', '""');
+    return `"${safe}"`;
+  }
+
+  function removeSpeakerRow(index) {
+    const content = getContent();
+    content.speakers.splice(index, 1);
+    if (!setContent(content)) return;
+    renderSpeakers(content.speakers);
+  }
+
+  function removeScheduleRow(index) {
+    const content = getContent();
+    content.schedule.splice(index, 1);
+    if (!setContent(content)) return;
+    renderSchedule(content.schedule);
+  }
+
+  function removeWorkshopRow(index) {
+    const content = getContent();
+    content.workshops.splice(index, 1);
+    if (!setContent(content)) return;
+    renderWorkshops(content.workshops);
+  }
+
+  function addSpeakerRow() {
+    const content = getContent();
+    content.speakers.push({ name: "", role: "", photoData: "" });
+    if (!setContent(content)) return;
+    renderSpeakers(content.speakers);
+  }
+
+  function handleSpeakerPhotoUpload(event, index) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const content = getContent();
+      if (!content.speakers[index]) return;
+      const optimizedImage = await resizeImageDataUrl(reader.result, 360, 0.8);
+      content.speakers[index].photoData = optimizedImage;
+      if (!setContent(content)) return;
+      renderSpeakers(content.speakers);
+      showToast("Speaker photo loaded. Click Save Speakers to keep it.");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function addScheduleRow() {
+    const content = getContent();
+    content.schedule.push({ time: "", title: "", speaker: "" });
+    if (!setContent(content)) return;
+    renderSchedule(content.schedule);
+  }
+
+  function addWorkshopRow() {
+    const content = getContent();
+    content.workshops.push({ title: "", facilitator: "", description: "" });
+    if (!setContent(content)) return;
+    renderWorkshops(content.workshops);
+  }
+
+  function resizeImageDataUrl(dataUrl, maxSize = 360, quality = 0.82) {
+    return new Promise((resolve) => {
+      const image = new Image();
+      image.onload = () => {
+        const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+        const width = Math.max(1, Math.round(image.width * scale));
+        const height = Math.max(1, Math.round(image.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const context = canvas.getContext("2d");
+        if (!context) {
+          resolve(dataUrl);
+          return;
+        }
+        context.drawImage(image, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      image.onerror = () => resolve(dataUrl);
+      image.src = dataUrl;
+    });
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function escapeAttribute(value) {
+    return escapeHtml(value);
+  }
+
+  function toLocalDateTimeValue(isoString) {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return "";
+    const adjusted = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return adjusted.toISOString().slice(0, 16);
+  }
+
+  function fromLocalDateTimeValue(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "" : date.toISOString();
+  }
+
+  function switchTab(name) {
+    document.querySelectorAll(".sidebar button").forEach((button) => {
+      button.classList.toggle("active", button.dataset.tab === name);
+    });
+    document.querySelectorAll(".main-panels > section").forEach((section) => {
+      section.classList.toggle("hidden", section.id !== `panel-${name}`);
+    });
+  }
+
+  let currentLogoData = "";
+
+  function renderLogoPreview(logoData) {
+    currentLogoData = logoData || "";
+    const preview = document.getElementById("logoPreview");
+    if (!currentLogoData) {
+      preview.style.display = "none";
+      preview.removeAttribute("src");
+      return;
+    }
+    preview.src = currentLogoData;
+    preview.style.display = "block";
+  }
+
+  async function handleLogoUpload(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const optimizedImage = await resizeImageDataUrl(reader.result, 420, 0.82);
+      renderLogoPreview(optimizedImage);
+      showToast("Logo loaded. Click Save Content to publish it.");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  document.getElementById("loginButton").addEventListener("click", login);
+  document.getElementById("password").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") login();
+  });
+  document.getElementById("logoutButton").addEventListener("click", logout);
+  document.getElementById("saveContentButton").addEventListener("click", saveContent);
+  document.getElementById("eventLogo").addEventListener("change", handleLogoUpload);
+  document.getElementById("saveSpeakersButton").addEventListener("click", saveSpeakers);
+  document.getElementById("saveWorkshopsButton").addEventListener("click", saveWorkshops);
+  document.getElementById("saveScheduleButton").addEventListener("click", saveSchedule);
+  document.getElementById("saveCredentialsButton").addEventListener("click", saveCredentials);
+  document.getElementById("addSpeakerButton").addEventListener("click", addSpeakerRow);
+  document.getElementById("addWorkshopButton").addEventListener("click", addWorkshopRow);
+  document.getElementById("addScheduleButton").addEventListener("click", addScheduleRow);
+  document.getElementById("exportCsvButton").addEventListener("click", exportCsv);
+  document.getElementById("clearRegistrationsButton").addEventListener("click", clearRegistrations);
+  document.querySelectorAll(".sidebar button").forEach((button) => {
+    button.addEventListener("click", () => switchTab(button.dataset.tab));
+  });
+</script>
+</body>
+</html>
