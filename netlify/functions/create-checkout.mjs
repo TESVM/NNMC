@@ -38,21 +38,23 @@ export default async (req) => {
       customer_email: body.email,
       line_items: [{ price: priceId, quantity: 1 }],
       metadata: {
-        fullName:   body.fullName,
-        phone:      body.phone,
-        church:     body.church,
-        pastor:     body.pastor,
-        clergyRole: body.clergyRole  || "",
-        carrier:    body.carrier     || "",
-        address:    body.address     || "",
-        cityState:  body.cityState   || "",
-        notes:      body.notes       || "",
-        tier:       tier,
+        fullName:      body.fullName,
+        phone:         body.phone,
+        phoneProvider: body.phoneProvider || "",
+        phoneGateway:  body.phoneGateway  || "",
+        church:        body.church,
+        pastor:        body.pastor,
+        clergyRole:    body.clergyRole || "",
+        address:       body.address    || "",
+        cityState:     body.cityState  || "",
+        notes:         body.notes      || "",
+        tier:          tier
       },
       success_url: `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${siteUrl}/register?cancelled=true`,
+      cancel_url:  `${siteUrl}/register?cancelled=true`
     });
-    return json({ url: session.url }, 200);
+
+    return json({ checkoutUrl: session.url, url: session.url }, 200);
   } catch (err) {
     console.error("Stripe error:", err.message);
     return json({ error: err.message }, 500);
