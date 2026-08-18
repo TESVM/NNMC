@@ -23,60 +23,432 @@
     --shadow: 0 24px 60px rgba(24, 14, 37, 0.14);
     --radius: 18px;
   }
+
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: var(--font-body); color: var(--ink); background: linear-gradient(180deg, #fbf7ef 0%, #f1eadc 100%); }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: linear-gradient(180deg, #fbf7ef 0%, #f1eadc 100%);
+    overflow-x: hidden;
+  }
   a { color: inherit; text-decoration: none; }
   button, input, textarea, select { font: inherit; }
-  .shell { width: min(980px, calc(100% - 2rem)); margin: 0 auto; }
-  .topbar { background: rgba(42, 22, 63, 0.96); color: #fff8eb; border-bottom: 1px solid rgba(211, 170, 71, 0.24); }
-  .topbar-inner { width: min(980px, calc(100% - 2rem)); margin: 0 auto; min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-  .brand { display: flex; align-items: center; gap: 0.9rem; }
-  .brand-mark { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-size: 1.25rem; color: var(--plum); background: linear-gradient(180deg, #f4e5b3, #d3aa47); }
-  .brand-mark img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-  .brand-copy strong, .brand-copy span { display: block; }
-  .brand-copy strong { font-family: var(--font-display); font-size: 0.84rem; letter-spacing: 0.08em; text-transform: uppercase; }
-  .brand-copy span { color: rgba(255, 248, 235, 0.74); font-size: 0.78rem; }
-  .back-link { font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: #f1dc9d; }
-  .hero { padding: 3.25rem 0 2.25rem; }
-  .hero-card { background: linear-gradient(155deg, #1b0f2a 0%, #4d2a73 100%); color: #fffdf6; border-radius: 28px; padding: 2rem; box-shadow: var(--shadow); }
-  .hero-card span { display: block; color: #e8d7a3; font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; }
-  .hero-card h1 { margin: 0.6rem 0 0; font-family: var(--font-display); font-size: clamp(1.9rem, 4vw, 3rem); text-transform: uppercase; }
-  .hero-card p { margin: 0.9rem 0 0; color: rgba(255, 253, 246, 0.8); max-width: 42rem; font-size: 1.05rem; }
-  .content { padding: 0 0 3rem; display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 1.2rem; align-items: start; }
-  .card { background: rgba(255, 255, 255, 0.78); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 14px 34px rgba(36, 22, 53, 0.08); }
-  .info-card, .form-card { padding: 1.3rem; }
-  .card h2 { margin: 0 0 0.9rem; font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--plum); }
-  .info-block + .info-block { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
-  .info-block strong { display: block; margin-bottom: 0.35rem; color: var(--plum-soft); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.76rem; }
-  .info-block p { margin: 0; color: #5f5966; line-height: 1.65; }
-  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
-  .field { margin-bottom: 0.9rem; }
-  .field label { display: block; margin-bottom: 0.35rem; font-size: 0.8rem; font-weight: 700; color: var(--plum-soft); text-transform: uppercase; letter-spacing: 0.1em; }
-  .field input, .field textarea, .field select { width: 100%; padding: 0.82rem 0.92rem; border-radius: 12px; border: 1px solid #d7ccb8; background: #fffdfa; color: var(--ink); }
-  .field textarea { min-height: 100px; resize: vertical; }
-  .field input:focus, .field textarea:focus, .field select:focus { outline: 2px solid rgba(77, 42, 115, 0.15); border-color: var(--plum-soft); }
-  .error { border-color: var(--danger) !important; box-shadow: 0 0 0 2px rgba(183, 64, 64, 0.08); }
-  .tier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.95rem; }
-  .tier-option { display: block; cursor: pointer; }
-  .tier-option input { position: absolute; opacity: 0; pointer-events: none; }
-  .tier-body { height: 100%; border: 1px solid #d7ccb8; border-radius: 16px; background: #fffdfa; padding: 1rem; transition: 150ms ease; }
-  .tier-option input:checked + .tier-body { border-color: var(--gold); background: #fff7de; transform: translateY(-1px); }
-  .tier-body strong { display: block; color: var(--plum); font-family: var(--font-display); font-size: 0.92rem; text-transform: uppercase; letter-spacing: 0.06em; }
-  .tier-price { margin-top: 0.35rem; color: var(--plum-soft); font-size: 1.5rem; font-weight: 700; }
-  .actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1rem; }
-  .btn { display: inline-flex; justify-content: center; align-items: center; min-height: 50px; padding: 0.9rem 1.3rem; border-radius: 999px; border: 1px solid transparent; font-size: 0.84rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; gap: 0.5rem; }
-  .btn-primary { background: var(--gold); color: var(--plum); }
-  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-  .btn-secondary { background: transparent; color: var(--plum); border-color: rgba(42, 22, 63, 0.25); }
-  .spinner { width: 16px; height: 16px; border: 2px solid rgba(42,22,63,0.25); border-top-color: var(--plum); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .success { display: none; margin-top: 1rem; padding: 1rem; border-radius: 14px; background: rgba(45, 119, 88, 0.12); border: 1px solid rgba(45, 119, 88, 0.3); color: var(--success); }
+
+  .shell {
+    width: min(980px, calc(100% - 2rem));
+    margin: 0 auto;
+  }
+  .topbar {
+    background: rgba(42, 22, 63, 0.96);
+    color: #fff8eb;
+    border-bottom: 1px solid rgba(211, 170, 71, 0.24);
+  }
+  .topbar-inner {
+    width: min(980px, calc(100% - 2rem));
+    margin: 0 auto;
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .brand-mark {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 1.25rem;
+    color: var(--plum);
+    background: linear-gradient(180deg, #f4e5b3, #d3aa47);
+  }
+  .brand-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0;
+    background: var(--plum);
+    border-radius: 50%;
+  }
+  .brand-copy strong,
+  .brand-copy span {
+    display: block;
+    overflow-wrap: anywhere;
+  }
+  .brand-copy strong {
+    font-family: var(--font-display);
+    font-size: 0.84rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .brand-copy span {
+    color: rgba(255, 248, 235, 0.74);
+    font-size: 0.78rem;
+  }
+  .back-link {
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f1dc9d;
+  }
+
+  .hero {
+    padding: 3.25rem 0 2.25rem;
+  }
+  .hero-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+      linear-gradient(
+        98deg,
+        rgba(17, 8, 28, 0.92) 0%,
+        rgba(34, 16, 52, 0.8) 34%,
+        rgba(58, 30, 88, 0.44) 68%,
+        rgba(89, 47, 130, 0.18) 100%
+      ),
+      radial-gradient(
+        circle at 56% 54%,
+        rgba(255, 193, 71, 0.4) 0%,
+        rgba(255, 193, 71, 0.15) 18%,
+        transparent 42%
+      ),
+      url("nnmc-bottom-banner.png");
+    background-position: center center, 54% 56%, center 62%;
+    background-repeat: no-repeat;
+    background-size: cover, cover, cover;
+    color: #fffdf6;
+    border: 1px solid rgba(211, 170, 71, 0.3);
+    border-radius: 32px;
+    min-height: 300px;
+    padding: 2.35rem;
+    box-shadow:
+      0 28px 60px rgba(24, 14, 37, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  }
+  .hero-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      linear-gradient(110deg, rgba(255, 255, 255, 0.12) 0%, transparent 22%),
+      linear-gradient(180deg, rgba(8, 4, 14, 0.06) 0%, rgba(8, 4, 14, 0.4) 100%),
+      radial-gradient(circle at 58% 52%, rgba(255, 229, 152, 0.18) 0%, transparent 24%),
+      radial-gradient(circle at center, transparent 44%, rgba(14, 7, 24, 0.36) 100%);
+  }
+  .hero-card > * {
+    position: relative;
+    z-index: 1;
+  }
+  .hero-card span {
+    display: block;
+    color: #e8d7a3;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .hero-card h1 {
+    margin: 0.6rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-shadow: 0 12px 30px rgba(10, 4, 16, 0.4);
+    overflow-wrap: anywhere;
+  }
+  .hero-card p {
+    margin: 0.9rem 0 0;
+    color: rgba(255, 253, 246, 0.86);
+    max-width: 42rem;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    text-shadow: 0 8px 18px rgba(10, 4, 16, 0.36);
+    overflow-wrap: anywhere;
+  }
+
+  .content {
+    padding: 0 0 3rem;
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 1.2rem;
+    align-items: start;
+  }
+  .content > * {
+    min-width: 0;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 14px 34px rgba(36, 22, 53, 0.08);
+  }
+  .info-card,
+  .form-card {
+    padding: 1.3rem;
+  }
+  .card h2 {
+    margin: 0 0 0.9rem;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--plum);
+  }
+  .info-block + .info-block {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .info-block strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--plum-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.76rem;
+  }
+  .info-block p {
+    margin: 0;
+    color: #5f5966;
+    line-height: 1.65;
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+  }
+  .field {
+    margin-bottom: 0.9rem;
+  }
+  .field label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--plum-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 0.82rem 0.92rem;
+    border-radius: 12px;
+    border: 1px solid #d7ccb8;
+    background: #fffdfa;
+    color: var(--ink);
+  }
+  .field textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    outline: 2px solid rgba(77, 42, 115, 0.15);
+    border-color: var(--plum-soft);
+  }
+  .error {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 2px rgba(183, 64, 64, 0.08);
+  }
+
+  .tier-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    margin-bottom: 0.95rem;
+  }
+  .tier-option {
+    display: block;
+    cursor: pointer;
+    min-width: 0;
+  }
+  .tier-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .tier-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 132px;
+    border: 1px solid #d7ccb8;
+    border-radius: 16px;
+    background: #fffdfa;
+    padding: 1rem;
+    transition: 150ms ease;
+  }
+  .tier-option input:checked + .tier-body {
+    border-color: var(--gold);
+    background: #fff7de;
+    transform: translateY(-1px);
+  }
+  .tier-body strong {
+    display: block;
+    color: var(--plum);
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .tier-price {
+    margin-top: 0.75rem;
+    color: var(--plum-soft);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+  .actions > * {
+    min-width: 0;
+  }
+  .btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50px;
+    padding: 0.9rem 1.3rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--plum);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--plum);
+    border-color: rgba(42, 22, 63, 0.25);
+  }
+
+  .success {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 14px;
+    background: rgba(45, 119, 88, 0.12);
+    border: 1px solid rgba(45, 119, 88, 0.3);
+    color: var(--success);
+  }
   .success.show { display: block; }
-  .stripe-note { font-size: 0.75rem; color: #8a7e96; margin-top: 0.75rem; }
-  .page-links { margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; }
-  .page-links a { color: var(--plum-soft); text-decoration: underline; text-underline-offset: 0.18em; }
-  @media (max-width: 860px) { .content { grid-template-columns: 1fr; } }
-  @media (max-width: 640px) { .field-grid, .tier-grid { grid-template-columns: 1fr; } }
+  .checkout-note {
+    margin: 0 0 1rem;
+    padding: 0.95rem 1rem;
+    border-radius: 14px;
+    background: rgba(77, 42, 115, 0.08);
+    border: 1px solid rgba(77, 42, 115, 0.14);
+    color: #564f62;
+  }
+  .page-links {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+  .page-links a {
+    color: var(--plum-soft);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  @media (max-width: 860px) {
+    .topbar-inner {
+      min-height: auto;
+      padding: 0.85rem 0;
+      flex-wrap: wrap;
+    }
+    .content { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .hero-card {
+      min-height: 320px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(17, 8, 28, 0.96) 0%,
+          rgba(34, 16, 52, 0.86) 42%,
+          rgba(68, 36, 102, 0.62) 100%
+        ),
+        radial-gradient(
+          circle at 50% 30%,
+          rgba(255, 193, 71, 0.24) 0%,
+          rgba(255, 193, 71, 0.06) 14%,
+          transparent 32%
+        ),
+        url("nnmc-bottom-banner.png");
+      background-position: center center, 50% 28%, 58% center;
+      background-repeat: no-repeat;
+      background-size: cover, cover, cover;
+    }
+    .hero-card {
+      padding: 1.8rem;
+      border-radius: 24px;
+    }
+    .hero-card h1 {
+      font-size: clamp(1.65rem, 8vw, 2.35rem);
+    }
+    .field-grid,
+    .tier-grid {
+      grid-template-columns: 1fr;
+    }
+    .actions .btn {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .topbar-inner,
+    .shell {
+      width: min(980px, calc(100% - 1rem));
+    }
+    .brand {
+      gap: 0.7rem;
+    }
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 auto;
+    }
+    .brand-copy strong {
+      font-size: 0.74rem;
+      line-height: 1.25;
+    }
+    .brand-copy span {
+      font-size: 0.72rem;
+      line-height: 1.2;
+    }
+    .back-link {
+      width: 100%;
+    }
+  }
 </style>
 </head>
 <body>
@@ -98,48 +470,92 @@
     <div class="hero-card">
       <span>Registration</span>
       <h1 id="pageTitle">Register for the Council</h1>
-      <p id="pageSubtitle">After you submit this form, you will be redirected to Stripe Checkout to complete payment securely.</p>
+      <p id="pageSubtitle">Complete the form below to begin your registration and continue to secure Stripe checkout.</p>
     </div>
   </section>
 
   <section class="content">
     <aside class="info-card card">
       <h2>Event Details</h2>
-      <div class="info-block"><strong>Date</strong><p id="eventDate">Saturday, October 18, 2025</p></div>
-      <div class="info-block"><strong>Time</strong><p id="eventTime">9:00 AM - 5:00 PM</p></div>
-      <div class="info-block"><strong>Location</strong><p id="eventLocation">Chicago, Illinois</p></div>
-      <div class="info-block"><strong>Payment</strong><p>&#x1F512; Secure online payment with Stripe Checkout</p></div>
+      <div class="info-block">
+        <strong>Date</strong>
+        <p id="eventDate">Saturday, October 18, 2025</p>
+      </div>
+      <div class="info-block">
+        <strong>Time</strong>
+        <p id="eventTime">9:00 AM - 5:00 PM</p>
+      </div>
+      <div class="info-block">
+        <strong>Location</strong>
+        <p id="eventLocation">Chicago, Illinois</p>
+      </div>
+      <div class="info-block">
+        <strong>Payment</strong>
+        <p id="paymentMethods">Secure online payment with Stripe Checkout</p>
+      </div>
     </aside>
 
     <section class="form-card card">
       <h2>Registration Form</h2>
+      <p class="checkout-note">After you submit this form, you will be redirected to Stripe Checkout to complete payment securely.</p>
+
       <div class="tier-grid" id="tierGrid"></div>
 
       <form id="registrationForm" novalidate>
         <div class="field-grid">
-          <div class="field"><label for="fullName">Full Name *</label><input id="fullName" name="fullName" autocomplete="name" required></div>
-          <div class="field"><label for="email">Email *</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+          <div class="field">
+            <label for="fullName">Full Name</label>
+            <input id="fullName" name="fullName" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </div>
         </div>
+
         <div class="field-grid">
-          <div class="field"><label for="phone">Phone *</label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
-          <div class="field"><label for="phoneProvider">Phone Provider</label>
-            <select id="phoneProvider" name="phoneProvider">
-              <option value="">Select...</option>
-              <option>Verizon</option><option>T-Mobile</option><option>AT&T</option>
-              <option>Boost Mobile</option><option>Cricket</option><option>Other</option>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" required>
+          </div>
+          <div class="field">
+            <label for="phoneProvider">Phone Provider</label>
+            <select id="phoneProvider" name="phoneProvider" required>
+              <option value="verizon">Verizon</option>
+              <option value="t-mobile">T-Mobile</option>
+              <option value="att">AT&amp;T</option>
+              <option value="boost-mobile">Boost Mobile</option>
+              <option value="other">Other</option>
             </select>
           </div>
         </div>
-        <div class="field-grid">
-          <div class="field"><label for="church">Church *</label><input id="church" name="church" required></div>
-          <div class="field"><label for="pastor">Pastor / Overseer *</label><input id="pastor" name="pastor" required></div>
+
+        <div class="field" id="phoneGatewayField" hidden>
+          <label for="phoneGateway">Carrier Text Gateway</label>
+          <input
+            id="phoneGateway"
+            name="phoneGateway"
+            placeholder="example: sms.carrier.example"
+            autocapitalize="off"
+            autocomplete="off"
+          >
         </div>
+
         <div class="field-grid">
-          <div class="field"><label for="clergyRole">Role</label>
+          <div class="field">
+            <label for="church">Church</label>
+            <input id="church" name="church" required>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label for="pastor">Pastor / Overseer</label>
+            <input id="pastor" name="pastor" required>
+          </div>
+          <div class="field">
+            <label for="clergyRole">Role</label>
             <select id="clergyRole" name="clergyRole">
-              <option value="Licensed & Ordained">Licensed &amp; Ordained</option>
-              <option value="Licensed">Licensed (not yet ordained)</option>
-              <option value="Ministerial Student">Ministerial Student</option>
               <option value="Pastor">Pastor</option>
               <option value="Elder">Elder</option>
               <option value="Minister">Minister</option>
@@ -147,19 +563,28 @@
               <option value="Guest">Guest</option>
             </select>
           </div>
-          <div class="field"><label for="address">Address</label><input id="address" name="address"></div>
         </div>
-        <div class="field"><label for="cityState">City / State</label><input id="cityState" name="cityState"></div>
-        <div class="field"><label for="notes">Notes</label><textarea id="notes" name="notes" placeholder="Special notes, group details, or ministry needs"></textarea></div>
 
-        <div class="actions">
-          <button class="btn btn-primary" type="submit" id="submitBtn">
-            <span id="btnText">Continue to the Payment Que</span>
-            <div class="spinner" id="btnSpinner"></div>
-          </button>
+        <div class="field">
+          <label for="address">Address</label>
+          <input id="address" name="address">
+        </div>
+
+        <div class="field">
+          <label for="cityState">City / State</label>
+          <input id="cityState" name="cityState">
+        </div>
+
+        <div class="field">
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" placeholder="Special notes, group details, or ministry needs"></textarea>
+        </div>
+
+      <div class="actions">
+          <button class="btn btn-primary" type="submit">Continue to the Payment Que</button>
           <a class="btn btn-secondary" href="admin.html">Open Admin</a>
         </div>
-        <p class="stripe-note">&#x1F512; Payments processed securely by Stripe. We never store your card details.</p>
+
         <div id="successMessage" class="success">Redirecting to secure checkout...</div>
         <div class="page-links">
           <a href="index.html">Back to homepage</a>
@@ -172,22 +597,38 @@
 
 <script>
   const API_CONTENT_URL = "/.netlify/functions/site-content";
-  const API_REGISTRATIONS_URL = "/.netlify/functions/registrations";
   const API_CHECKOUT_URL = "/api/create-checkout";
-
   const DEFAULT_CONTENT = {
-    event: { title: "Northern North Ministerial Council", subtitle: "After you submit this form, you will be redirected to Stripe Checkout to complete payment securely.", date: "Saturday, October 18, 2025", time: "9:00 AM - 5:00 PM", location: "Chicago, Illinois", logoData: "" },
-    pricing: { earlyLabel: "Early Registration", earlyPrice: "25", regularLabel: "Regular Registration", regularPrice: "35", paymentMethods: "Stripe Checkout" }
+    event: {
+      title: "Northern North Ministerial Council",
+      subtitle: "Three days of preaching, fellowship, and ministry development from Friday through Sunday.",
+      date: "Friday, October 17, 2025 - Sunday, October 19, 2025",
+      time: "Morning and Night Services Daily",
+      location: "Chicago, Illinois",
+      logoData: ""
+    },
+    pricing: {
+      earlyLabel: "Early Registration",
+      earlyPrice: "25",
+      regularLabel: "Regular Registration",
+      regularPrice: "35",
+      paymentMethods: "Secure online payment with Stripe Checkout"
+    }
   };
 
   async function getContent() {
     try {
       const response = await fetch(API_CONTENT_URL, { cache: "no-store" });
-      if (!response.ok) throw new Error();
+      if (!response.ok) throw new Error("Failed to load site content.");
       const payload = await response.json();
       const stored = payload.content || {};
-      return { event: { ...DEFAULT_CONTENT.event, ...(stored.event || {}) }, pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) } };
-    } catch { return structuredClone(DEFAULT_CONTENT); }
+      return {
+        event: { ...DEFAULT_CONTENT.event, ...(stored.event || {}) },
+        pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
+      };
+    } catch {
+      return structuredClone(DEFAULT_CONTENT);
+    }
   }
 
   async function renderContent() {
@@ -198,76 +639,125 @@
     document.getElementById("eventDate").textContent = content.event.date;
     document.getElementById("eventTime").textContent = content.event.time;
     document.getElementById("eventLocation").textContent = content.event.location;
+    document.getElementById("paymentMethods").textContent = content.pricing.paymentMethods;
+
     const tierGrid = document.getElementById("tierGrid");
     tierGrid.innerHTML = `
-      <label class="tier-option"><input type="radio" name="tier" value="early" checked>
-        <span class="tier-body"><strong>${escapeHtml(content.pricing.earlyLabel)}</strong><span class="tier-price">$${escapeHtml(content.pricing.earlyPrice)}</span></span></label>
-      <label class="tier-option"><input type="radio" name="tier" value="regular">
-        <span class="tier-body"><strong>${escapeHtml(content.pricing.regularLabel)}</strong><span class="tier-price">$${escapeHtml(content.pricing.regularPrice)}</span></span></label>`;
+      <label class="tier-option">
+        <input type="radio" name="tier" value="early" checked>
+        <span class="tier-body">
+          <strong>${escapeHtml(content.pricing.earlyLabel)}</strong>
+          <span class="tier-price">$${escapeHtml(content.pricing.earlyPrice)}</span>
+        </span>
+      </label>
+      <label class="tier-option">
+        <input type="radio" name="tier" value="regular">
+        <span class="tier-body">
+          <strong>${escapeHtml(content.pricing.regularLabel)}</strong>
+          <span class="tier-price">$${escapeHtml(content.pricing.regularPrice)}</span>
+        </span>
+      </label>
+    `;
   }
 
   function applyLogo(logoData) {
     const brandMark = document.querySelector(".brand-mark");
-    brandMark.innerHTML = logoData ? `<img src="${logoData}" alt="Logo">` : "✝";
+    if (!logoData) {
+      brandMark.innerHTML = "✝";
+      return;
+    }
+    brandMark.innerHTML = `<img src="${escapeHtml(logoData)}" alt="Northern North Ministerial Council logo">`;
   }
 
-  function escapeHtml(v) {
-    return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  async function createCheckoutSession(payload) {
+    const response = await fetch(API_CHECKOUT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      const errorPayload = await response.json().catch(() => ({}));
+      throw new Error(errorPayload.error || "Checkout could not be started.");
+    }
+    return response.json();
   }
 
   const form = document.getElementById("registrationForm");
+  const phoneProviderField = document.getElementById("phoneProvider");
+  const phoneGatewayField = document.getElementById("phoneGatewayField");
+  const phoneGatewayInput = document.getElementById("phoneGateway");
+
+  function syncPhoneGatewayField() {
+    const isOther = phoneProviderField.value === "other";
+    phoneGatewayField.hidden = !isOther;
+    phoneGatewayInput.required = isOther;
+    if (!isOther) {
+      phoneGatewayInput.classList.remove("error");
+      phoneGatewayInput.value = "";
+    }
+  }
+
+  phoneProviderField.addEventListener("change", syncPhoneGatewayField);
+  syncPhoneGatewayField();
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const requiredIds = ["fullName", "email", "phone", "church", "pastor"];
+    const requiredIds = ["fullName", "email", "phone", "phoneProvider", "church", "pastor"];
     let valid = true;
+
     requiredIds.forEach((id) => {
       const field = document.getElementById(id);
       const hasValue = field.value.trim().length > 0;
       field.classList.toggle("error", !hasValue);
       if (!hasValue) valid = false;
     });
-    if (!valid) return;
 
-    const btn = document.getElementById("submitBtn");
-    const btnText = document.getElementById("btnText");
-    const spinner = document.getElementById("btnSpinner");
-    btn.disabled = true;
-    btnText.textContent = "Redirecting to payment...";
-    spinner.style.display = "block";
+    const requiresGateway = phoneProviderField.value === "other";
+    if (requiresGateway) {
+      const hasGateway = phoneGatewayInput.value.trim().length > 0;
+      phoneGatewayInput.classList.toggle("error", !hasGateway);
+      if (!hasGateway) valid = false;
+    }
+
+    if (!valid) {
+      return;
+    }
 
     const tier = form.querySelector('input[name="tier"]:checked')?.value || "early";
     const payload = {
-      id: Date.now(),
-      createdAt: new Date().toISOString(),
-      fullName:    document.getElementById("fullName").value.trim(),
-      email:       document.getElementById("email").value.trim(),
-      phone:       document.getElementById("phone").value.trim(),
-      carrier:     document.getElementById("phoneProvider").value,
-      church:      document.getElementById("church").value.trim(),
-      pastor:      document.getElementById("pastor").value.trim(),
-      clergyRole:  document.getElementById("clergyRole").value,
-      address:     document.getElementById("address").value.trim(),
-      cityState:   document.getElementById("cityState").value.trim(),
-      notes:       document.getElementById("notes").value.trim(),
+      fullName: document.getElementById("fullName").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      phone: document.getElementById("phone").value.trim(),
+      phoneProvider: phoneProviderField.value,
+      phoneGateway: phoneGatewayInput.value.trim(),
+      church: document.getElementById("church").value.trim(),
+      pastor: document.getElementById("pastor").value.trim(),
+      clergyRole: document.getElementById("clergyRole").value.trim(),
+      address: document.getElementById("address").value.trim(),
+      cityState: document.getElementById("cityState").value.trim(),
+      notes: document.getElementById("notes").value.trim(),
       tier
     };
 
     try {
-      const res = await fetch(API_CHECKOUT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (!res.ok || !data.url) throw new Error(data.error || "Could not create checkout session.");
       document.getElementById("successMessage").classList.add("show");
-      localStorage.setItem("nnmc_pending_reg", JSON.stringify(payload));
-      window.location.href = data.url;
+      const checkout = await createCheckoutSession(payload);
+      if (!checkout.checkoutUrl) {
+        throw new Error("Stripe checkout URL was not returned.");
+      }
+      window.location.href = checkout.checkoutUrl;
     } catch (error) {
-      alert(error.message || "Payment could not be initiated.");
-      btn.disabled = false;
-      btnText.textContent = "Continue to the Payment Que";
-      spinner.style.display = "none";
+      document.getElementById("successMessage").classList.remove("show");
+      alert(error.message || "Checkout could not be started.");
     }
   });
 
