@@ -31,10 +31,16 @@
     font-family: var(--font-body);
     color: var(--ink);
     background: linear-gradient(180deg, #fdfbf6 0%, #f7f1e4 100%);
+    overflow-x: hidden;
   }
   a { color: inherit; text-decoration: none; }
   img { max-width: 100%; display: block; }
   button, input, textarea, select { font: inherit; }
+  a:focus-visible,
+  button:focus-visible {
+    outline: 3px solid var(--gold-soft);
+    outline-offset: 3px;
+  }
 
   .shell {
     width: min(1120px, calc(100% - 2rem));
@@ -63,10 +69,11 @@
     align-items: center;
     gap: 0.9rem;
     min-width: 0;
+    flex: 1 1 auto;
   }
   .brand-mark {
-    width: 52px;
-    height: 52px;
+    width: 58px;
+    height: 58px;
     border-radius: 50%;
     background:
       radial-gradient(circle at 30% 30%, #f6e6b8 0%, #d3aa47 42%, #845f1c 100%);
@@ -80,8 +87,16 @@
   .footer-mark img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    padding: 2px;
     border-radius: 50%;
+  }
+  .brand-mark img {
+    padding: 0;
+    background: var(--plum);
+  }
+  .footer-mark img {
+    background: #fffdf6;
   }
   .brand-copy {
     min-width: 0;
@@ -136,12 +151,40 @@
 
   .hero {
     position: relative;
+    isolation: isolate;
     overflow: hidden;
-    background:
-      radial-gradient(circle at top left, rgba(241, 220, 157, 0.22), transparent 30%),
-      radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.12), transparent 22%),
-      linear-gradient(155deg, #13091f 0%, #2a163f 55%, #593384 100%);
+    background: linear-gradient(155deg, #13091f 0%, #2a163f 55%, #593384 100%);
     color: #fffdf6;
+  }
+  .hero-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      linear-gradient(
+        90deg,
+        rgba(18, 9, 31, 0.97) 0%,
+        rgba(42, 22, 63, 0.92) 42%,
+        rgba(77, 42, 115, 0.78) 100%
+      ),
+      radial-gradient(
+        circle at 76% 48%,
+        rgba(241, 220, 157, 0.16) 0%,
+        rgba(241, 220, 157, 0.04) 18%,
+        transparent 42%
+      ),
+      url("chicago-skyline.jpg");
+    background-position: center center, 76% 50%, right center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .hero-backdrop::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at center, transparent 48%, rgba(13, 5, 22, 0.28) 100%),
+      linear-gradient(180deg, rgba(7, 3, 12, 0.15) 0%, rgba(7, 3, 12, 0.42) 100%);
   }
   .hero::before,
   .hero::after {
@@ -157,13 +200,15 @@
     height: 360px;
     right: -80px;
     top: -60px;
-    background: radial-gradient(circle, var(--gold-soft) 0%, transparent 70%);
+    z-index: 0;
+    background: radial-gradient(circle, rgba(241, 220, 157, 0.6) 0%, transparent 70%);
   }
   .hero::after {
     width: 260px;
     height: 260px;
     left: -70px;
     bottom: -120px;
+    z-index: 0;
     background: radial-gradient(circle, #ffffff 0%, transparent 70%);
   }
   .hero-inner {
@@ -178,6 +223,10 @@
   .hero-copy {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
   }
   .eyebrow {
     display: inline-flex;
@@ -204,7 +253,7 @@
     letter-spacing: 0.04em;
   }
   .hero-subtitle {
-    margin: 1.15rem 0 0;
+    margin: 0;
     font-size: clamp(1.08rem, 2.2vw, 1.45rem);
     color: rgba(255, 253, 246, 0.84);
     max-width: 42rem;
@@ -217,9 +266,10 @@
   }
   .hero-meta-card {
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(241, 220, 157, 0.22);
+    border: 1px solid rgba(241, 220, 157, 0.24);
     border-radius: 16px;
     padding: 1rem 1.05rem;
+    backdrop-filter: blur(10px);
   }
   .hero-meta-card span {
     display: block;
@@ -240,6 +290,20 @@
     display: flex;
     gap: 0.9rem;
     flex-wrap: wrap;
+  }
+  .hero-copy.compact .eyebrow,
+  .hero-copy.compact h1 {
+    display: none;
+  }
+  .hero-copy.compact .hero-subtitle {
+    max-width: 34rem;
+    font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+  }
+  .hero-copy.compact .hero-meta {
+    margin-top: 1.25rem;
+  }
+  .hero-copy.compact .hero-actions {
+    margin-top: 1.35rem;
   }
   .btn {
     display: inline-flex;
@@ -268,19 +332,66 @@
     transform: translateY(-1px);
     filter: brightness(1.03);
   }
+  .nnmc-banner-section {
+    width: 100%;
+    background:
+      radial-gradient(circle at 15% 50%, rgba(255, 190, 45, 0.2), transparent 320px),
+      linear-gradient(135deg, #12051f 0%, #1d0b31 48%, #4c3654 100%);
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+  .nnmc-banner-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 1920px;
+    margin: 0 auto;
+  }
+  .nnmc-banner-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  .nnmc-banner-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    left: -9999px;
+    top: auto;
+    overflow: hidden;
+  }
+  .nnmc-banner-text p,
+  .nnmc-banner-text h1 {
+    margin: 0;
+  }
+  .nnmc-banner-section::after {
+    content: "";
+    display: block;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 213, 93, 0.85),
+      transparent
+    );
+  }
   .hero-panel {
     position: relative;
     z-index: 1;
-    background: rgba(255, 252, 243, 0.1);
-    border: 1px solid rgba(241, 220, 157, 0.24);
+    background: rgba(255, 252, 243, 0.12);
+    border: 1px solid rgba(241, 220, 157, 0.28);
     border-radius: 28px;
     padding: 1.4rem;
     box-shadow: var(--shadow);
+    backdrop-filter: blur(16px);
+    min-width: 0;
   }
   .countdown-card {
-    background: rgba(16, 8, 24, 0.55);
+    background: rgba(12, 6, 20, 0.66);
     border-radius: 22px;
     padding: 1.45rem;
+    border: 1px solid rgba(241, 220, 157, 0.14);
   }
   .countdown-card h2 {
     margin: 0 0 0.4rem;
@@ -376,6 +487,7 @@
     margin: 0 0 1rem;
     color: #4f4a57;
     font-size: 1.03rem;
+    overflow-wrap: anywhere;
   }
   .quote-card {
     padding: 1.7rem;
@@ -529,24 +641,75 @@
   }
 
   .register-banner {
-    background: linear-gradient(160deg, #25143a 0%, #4d2a73 100%);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+      linear-gradient(
+        98deg,
+        rgba(17, 8, 28, 0.92) 0%,
+        rgba(34, 16, 52, 0.8) 34%,
+        rgba(58, 30, 88, 0.44) 68%,
+        rgba(89, 47, 130, 0.18) 100%
+      ),
+      radial-gradient(
+        circle at 56% 54%,
+        rgba(255, 193, 71, 0.4) 0%,
+        rgba(255, 193, 71, 0.15) 18%,
+        transparent 42%
+      ),
+      url("nnmc-bottom-banner.png");
+    background-position: center center, 54% 56%, center 62%;
+    background-repeat: no-repeat;
+    background-size: cover, cover, cover;
     color: #fffdf6;
-    border-radius: 28px;
-    padding: 2rem;
+    border: 1px solid rgba(211, 170, 71, 0.3);
+    border-radius: 32px;
+    min-height: 300px;
+    padding: 2.35rem;
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 1rem;
-    align-items: center;
-    box-shadow: var(--shadow);
+    gap: 1.25rem;
+    align-items: end;
+    box-shadow:
+      0 28px 60px rgba(24, 14, 37, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  }
+  .register-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      linear-gradient(110deg, rgba(255, 255, 255, 0.12) 0%, transparent 22%),
+      linear-gradient(180deg, rgba(8, 4, 14, 0.06) 0%, rgba(8, 4, 14, 0.4) 100%),
+      radial-gradient(circle at 58% 52%, rgba(255, 229, 152, 0.18) 0%, transparent 24%),
+      radial-gradient(circle at center, transparent 44%, rgba(14, 7, 24, 0.36) 100%);
+  }
+  .register-banner > * {
+    position: relative;
+    z-index: 1;
+  }
+  .register-banner > div {
+    max-width: 38rem;
+    min-width: 0;
   }
   .register-banner h2 {
-    margin: 0 0 0.4rem;
+    margin: 0 0 0.55rem;
     font-family: var(--font-display);
-    font-size: clamp(1.6rem, 3vw, 2.35rem);
+    font-size: clamp(1.85rem, 3.2vw, 2.85rem);
+    line-height: 1.05;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-shadow: 0 12px 30px rgba(10, 4, 16, 0.4);
   }
   .register-banner p {
     margin: 0;
-    color: rgba(255, 253, 246, 0.78);
+    max-width: 34rem;
+    color: rgba(255, 253, 246, 0.86);
+    font-size: 1.06rem;
+    line-height: 1.65;
+    text-shadow: 0 8px 18px rgba(10, 4, 16, 0.36);
   }
 
   .footer {
@@ -555,15 +718,15 @@
     text-align: center;
   }
   .footer-mark {
-    width: 58px;
-    height: 58px;
+    width: 82px;
+    height: 82px;
     margin: 0 auto 0.8rem;
     border-radius: 50%;
     background: linear-gradient(180deg, #f4e5b3, #d3aa47);
     color: var(--plum);
     display: grid;
     place-items: center;
-    font-size: 1.2rem;
+    font-size: 1.55rem;
   }
   .footer-links {
     margin-top: 0.9rem;
@@ -580,6 +743,33 @@
   }
 
   @media (max-width: 900px) {
+    .register-banner {
+      min-height: 280px;
+      background-position: center center, 52% 46%, center 58%;
+      background-size: cover, cover, cover;
+    }
+    .hero-backdrop {
+      background-image:
+        linear-gradient(
+          180deg,
+          rgba(18, 9, 31, 0.95) 0%,
+          rgba(42, 22, 63, 0.88) 44%,
+          rgba(77, 42, 115, 0.8) 100%
+        ),
+        radial-gradient(
+          circle at 70% 24%,
+          rgba(241, 220, 157, 0.14) 0%,
+          rgba(241, 220, 157, 0.04) 18%,
+          transparent 40%
+        ),
+        url("chicago-skyline.jpg");
+      background-position: center center, 72% 22%, 62% center;
+    }
+    .nnmc-banner-img {
+      min-height: 280px;
+      object-fit: cover;
+      object-position: left center;
+    }
     .hero-inner,
     .about-grid,
     .register-banner {
@@ -591,6 +781,11 @@
   }
 
   @media (max-width: 760px) {
+    .topbar-inner {
+      position: relative;
+      min-height: auto;
+      padding: 0.85rem 0;
+    }
     .nav-toggle { display: inline-flex; }
     .nav-links {
       display: none;
@@ -608,8 +803,141 @@
     }
     .nav-links.open { display: flex; }
     .nav-links a { padding: 0.35rem 0; }
+    .hero-inner {
+      padding: 4.35rem 0 3.6rem;
+      gap: 1.4rem;
+    }
+    .hero-backdrop {
+      background-image:
+        linear-gradient(
+          180deg,
+          rgba(18, 9, 31, 0.96) 0%,
+          rgba(42, 22, 63, 0.9) 48%,
+          rgba(77, 42, 115, 0.82) 100%
+        ),
+        radial-gradient(
+          circle at 70% 20%,
+          rgba(241, 220, 157, 0.12) 0%,
+          rgba(241, 220, 157, 0.03) 18%,
+          transparent 40%
+        ),
+        url("chicago-skyline.jpg");
+      background-position: center center, 70% 22%, 66% center;
+    }
     .countdown-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .schedule-item { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .nnmc-banner-img {
+      min-height: 240px;
+      object-fit: cover;
+      object-position: left center;
+    }
+    .hero-inner {
+      width: min(1120px, calc(100% - 1.5rem));
+      padding: 4rem 0 3.2rem;
+    }
+    .hero-meta {
+      gap: 0.8rem;
+    }
+    .hero-meta-card,
+    .hero-panel {
+      border-radius: 18px;
+    }
+    .register-banner {
+      padding: 1.8rem;
+      border-radius: 24px;
+    }
+    .register-banner h2 {
+      font-size: clamp(1.5rem, 8vw, 2.2rem);
+    }
+    .register-banner .btn {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .topbar-inner {
+      width: min(1120px, calc(100% - 1rem));
+      gap: 0.75rem;
+    }
+    .brand {
+      gap: 0.7rem;
+    }
+    .brand-mark {
+      width: 50px;
+      height: 50px;
+      font-size: 1.2rem;
+      flex: 0 0 auto;
+    }
+    .brand-copy strong {
+      font-size: 0.75rem;
+      white-space: normal;
+      line-height: 1.25;
+    }
+    .brand-copy span {
+      white-space: normal;
+      line-height: 1.2;
+    }
+    .register-banner {
+      background:
+        linear-gradient(
+          180deg,
+          rgba(17, 8, 28, 0.96) 0%,
+          rgba(34, 16, 52, 0.86) 42%,
+          rgba(68, 36, 102, 0.62) 100%
+        ),
+        radial-gradient(
+          circle at 50% 30%,
+          rgba(255, 193, 71, 0.24) 0%,
+          rgba(255, 193, 71, 0.06) 14%,
+          transparent 32%
+        ),
+        url("nnmc-bottom-banner.png");
+      background-position: center center, 50% 28%, 58% center;
+      background-repeat: no-repeat;
+      background-size: cover, cover, cover;
+      min-height: 320px;
+    }
+    .hero-backdrop {
+      background-image:
+        linear-gradient(
+          180deg,
+          rgba(18, 9, 31, 0.97) 0%,
+          rgba(42, 22, 63, 0.91) 52%,
+          rgba(77, 42, 115, 0.84) 100%
+        ),
+        radial-gradient(
+          circle at 68% 18%,
+          rgba(241, 220, 157, 0.1) 0%,
+          rgba(241, 220, 157, 0.02) 16%,
+          transparent 36%
+        ),
+        url("chicago-skyline.jpg");
+      background-position: center center, 68% 20%, 70% center;
+    }
+    .hero-inner {
+      width: min(1120px, calc(100% - 1rem));
+      padding: 3.7rem 0 3rem;
+    }
+    .hero-subtitle {
+      font-size: 1.08rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 11vw, 2.85rem);
+    }
+    .hero-actions .btn {
+      width: 100%;
+    }
+    .countdown-card {
+      padding: 1.15rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn { transition: none; }
   }
 </style>
 </head>
@@ -638,9 +966,24 @@
 </header>
 
 <main>
+  <section class="nnmc-banner-section" aria-label="AOH Church of God Northern North Ministerial Council">
+    <div class="nnmc-banner-wrap">
+      <img
+        src="nnmc-banner.png"
+        alt="AOH Church of God Northern North Ministerial Council"
+        class="nnmc-banner-img"
+      >
+      <div class="nnmc-banner-text">
+        <p>AOH Church of God</p>
+        <h1>Northern North Ministerial Council</h1>
+      </div>
+    </div>
+  </section>
+
   <section class="hero">
+    <div class="hero-backdrop" aria-hidden="true"></div>
     <div class="hero-inner">
-      <div class="hero-copy">
+      <div class="hero-copy compact">
         <div id="heroEyebrow" class="eyebrow">AOH Church of God</div>
         <h1 id="heroTitle">Northern North Ministerial Council</h1>
         <p id="heroSubtitle" class="hero-subtitle">Walking together in faith, fellowship, and ministry preparation.</p>
@@ -892,7 +1235,7 @@
     const speakerGrid = document.getElementById("speakerGrid");
     speakerGrid.innerHTML = content.speakers.map((speaker) => `
       <article class="speaker-card card">
-        <div class="speaker-seal">${speaker.photoData ? `<img src="${speaker.photoData}" alt="${escapeHtml(speaker.name || "Speaker")}">` : "✝"}</div>
+        <div class="speaker-seal">${speaker.photoData ? `<img src="${escapeHtml(speaker.photoData)}" alt="${escapeHtml(speaker.name || "Speaker")}">` : "✝"}</div>
         <h3>${escapeHtml(speaker.name || "")}</h3>
         <p>${escapeHtml(speaker.role || "")}</p>
       </article>
@@ -929,8 +1272,8 @@
       footerMark.innerHTML = "✝";
       return;
     }
-    brandMark.innerHTML = `<img src="${logoData}" alt="Northern North Ministerial Council logo">`;
-    footerMark.innerHTML = `<img src="${logoData}" alt="">`;
+    brandMark.innerHTML = `<img src="${escapeHtml(logoData)}" alt="Northern North Ministerial Council logo">`;
+    footerMark.innerHTML = `<img src="${escapeHtml(logoData)}" alt="">`;
   }
 
   function startCountdown(targetValue) {
