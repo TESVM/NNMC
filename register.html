@@ -732,7 +732,7 @@
       return;
     }
 
-    const tier = form.querySelector('input[name="tier"]:checked')?.value || "early";
+    const tier = document.querySelector('input[name="tier"]:checked')?.value || "early";
     const payload = {
       fullName: document.getElementById("fullName").value.trim(),
       email: document.getElementById("email").value.trim(),
