@@ -542,6 +542,11 @@
     height: 100%;
     object-fit: cover;
   }
+  .speaker-seal.speaker-seal--single-ring {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
   .speaker-card h3 {
     margin: 0;
     font-family: var(--font-display);
@@ -1332,7 +1337,7 @@
     const speakerGrid = document.getElementById("speakerGrid");
     speakerGrid.innerHTML = content.speakers.map((speaker) => `
       <article class="speaker-card card">
-        <div class="speaker-seal">${speaker.photoData ? `<img src="${escapeHtml(speaker.photoData)}" alt="${escapeHtml(speaker.name || "Speaker")}">` : "✝"}</div>
+        <div class="speaker-seal${isElderMuich(speaker.name) ? " speaker-seal--single-ring" : ""}">${speaker.photoData ? `<img src="${escapeHtml(speaker.photoData)}" alt="${escapeHtml(speaker.name || "Speaker")}">` : "✝"}</div>
         <h3>${escapeHtml(speaker.name || "")}</h3>
         <p>${escapeHtml(speaker.role || "")}</p>
       </article>
@@ -1443,6 +1448,10 @@
     } catch {
       return "";
     }
+  }
+
+  function isElderMuich(name) {
+    return /elder\s+l\.?\s+muich/i.test(String(name || ""));
   }
 
   function escapeHtml(value) {
