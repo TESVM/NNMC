@@ -240,7 +240,8 @@
 
   .speaker-row,
   .schedule-row,
-  .workshop-row {
+  .workshop-row,
+  .hotel-row {
     display: grid;
     gap: 0.75rem;
     margin-bottom: 0.75rem;
@@ -249,6 +250,7 @@
   .speaker-row { grid-template-columns: 1fr 1fr 120px 120px auto; }
   .schedule-row { grid-template-columns: 140px 1fr 1fr auto; }
   .workshop-row { grid-template-columns: 1fr 1fr 1.4fr auto; }
+  .hotel-row { grid-template-columns: 1.2fr 0.8fr 1fr 1fr 0.6fr 1fr 1.2fr auto; }
   .speaker-preview {
     width: 72px;
     height: 72px;
@@ -301,7 +303,8 @@
     .field-grid,
     .speaker-row,
     .schedule-row,
-    .workshop-row {
+    .workshop-row,
+    .hotel-row {
       grid-template-columns: 1fr;
     }
     .stats { grid-template-columns: 1fr; }
@@ -352,6 +355,7 @@
         <button class="btn" data-tab="speakers" type="button">Speakers</button>
         <button class="btn" data-tab="workshops" type="button">Workshops</button>
         <button class="btn" data-tab="schedule" type="button">Schedule</button>
+        <button class="btn" data-tab="hotels" type="button">Hotels</button>
         <button class="btn" data-tab="registrations" type="button">Registrations</button>
         <button class="btn" data-tab="security" type="button">Security</button>
       </aside>
@@ -512,6 +516,16 @@
           </div>
         </section>
 
+        <section id="panel-hotels" class="panel hidden">
+          <h2>Hotel Accommodations</h2>
+          <p>Edit hotel names, rates, addresses, and booking links here. Changes appear automatically on the public site.</p>
+          <div id="hotelRows"></div>
+          <div class="topbar-actions">
+            <button id="addHotelButton" class="btn btn-secondary" type="button">Add Hotel</button>
+            <button id="saveHotelsButton" class="btn" type="button">Save Hotels</button>
+          </div>
+        </section>
+
         <section id="panel-registrations" class="panel hidden">
           <h2>Registrations</h2>
           <div class="topbar-actions" style="margin-bottom: 1rem;">
@@ -615,6 +629,10 @@
       { time: "Sunday 12:00 PM", title: "Morning Workshops", speaker: "Workshop Facilitators" },
       { time: "Sunday 6:00 PM", title: "Closing Night Service", speaker: "Featured Night Speaker" }
     ],
+    hotels: [
+      { name: "Holiday Inn Chicago - Midway Airport S", brand: "IHG Hotel", address: "7353 S. Cicero Avenue", cityState: "Chicago, IL 60629", rate: "$148-$161", rateNote: "Listed nightly rate; taxes may apply", bookingUrl: "https://www.ihg.com/holidayinn/hotels/us/en/chicago/chici/hoteldetail" },
+      { name: "Best Western Inn & Suites - Midway Airport", brand: "Burbank, Illinois", address: "8220 S. Cicero Avenue", cityState: "Burbank, IL 60459", rate: "$166", rateNote: "Listed nightly rate; taxes may apply", bookingUrl: "https://www.bestwestern.com/en_US/book/hotels-in-burbank/best-western-inn-suites-midway-airport/propertyCode.14159.html" }
+    ],
     venue: {
       name: "Northern North Assembly Hall",
       address: "123 Ministry Lane",
@@ -646,6 +664,7 @@
         : structuredClone(DEFAULT_CONTENT.speakers),
       workshops: Array.isArray(stored.workshops) && stored.workshops.length ? stored.workshops : structuredClone(DEFAULT_CONTENT.workshops),
       schedule: Array.isArray(stored.schedule) && stored.schedule.length ? stored.schedule : structuredClone(DEFAULT_CONTENT.schedule),
+      hotels: Array.isArray(stored.hotels) && stored.hotels.length ? stored.hotels : structuredClone(DEFAULT_CONTENT.hotels),
       venue: { ...DEFAULT_CONTENT.venue, ...(stored.venue || {}) },
       pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
     };
@@ -814,6 +833,7 @@
     renderSpeakers(content.speakers);
     renderWorkshops(content.workshops);
     renderSchedule(content.schedule);
+    renderHotels(content.hotels);
     renderRegistrations();
     renderStats();
   }
@@ -859,6 +879,22 @@
         <input class="workshop-facilitator" value="${escapeAttribute(item.facilitator || "")}" placeholder="Facilitator">
         <input class="workshop-description" value="${escapeAttribute(item.description || "")}" placeholder="Short description">
         <button class="btn btn-danger" type="button" onclick="removeWorkshopRow(${index})">Remove</button>
+      </div>
+    `).join("");
+  }
+
+  function renderHotels(hotels) {
+    const container = document.getElementById("hotelRows");
+    container.innerHTML = hotels.map((hotel, index) => `
+      <div class="hotel-row" data-index="${index}">
+        <input class="hotel-name" value="${escapeAttribute(hotel.name || "")}" placeholder="Hotel name">
+        <input class="hotel-brand" value="${escapeAttribute(hotel.brand || "")}" placeholder="Brand / location label">
+        <input class="hotel-address" value="${escapeAttribute(hotel.address || "")}" placeholder="Street address">
+        <input class="hotel-city" value="${escapeAttribute(hotel.cityState || "")}" placeholder="City, state ZIP">
+        <input class="hotel-rate" value="${escapeAttribute(hotel.rate || "")}" placeholder="Rate">
+        <input class="hotel-note" value="${escapeAttribute(hotel.rateNote || "")}" placeholder="Rate note">
+        <input class="hotel-url" type="url" value="${escapeAttribute(hotel.bookingUrl || "")}" placeholder="Booking URL">
+        <button class="btn btn-danger" type="button" onclick="removeHotelRow(${index})">Remove</button>
       </div>
     `).join("");
   }
@@ -939,6 +975,26 @@
       showToast("Workshops saved.");
     } catch (error) {
       showToast(error.message || "Workshops could not be saved.", true);
+    }
+  }
+
+  async function saveHotels() {
+    const rows = [...document.querySelectorAll("#hotelRows .hotel-row")];
+    currentContent.hotels = rows.map((row) => ({
+      name: row.querySelector(".hotel-name").value.trim(),
+      brand: row.querySelector(".hotel-brand").value.trim(),
+      address: row.querySelector(".hotel-address").value.trim(),
+      cityState: row.querySelector(".hotel-city").value.trim(),
+      rate: row.querySelector(".hotel-rate").value.trim(),
+      rateNote: row.querySelector(".hotel-note").value.trim(),
+      bookingUrl: row.querySelector(".hotel-url").value.trim()
+    })).filter((item) => item.name || item.address || item.rate);
+    try {
+      await persistCurrentContent();
+      renderHotels(currentContent.hotels);
+      showToast("Hotels saved.");
+    } catch (error) {
+      showToast(error.message || "Hotels could not be saved.", true);
     }
   }
 
@@ -1051,6 +1107,11 @@
     renderWorkshops(currentContent.workshops);
   }
 
+  function removeHotelRow(index) {
+    currentContent.hotels.splice(index, 1);
+    renderHotels(currentContent.hotels);
+  }
+
   function addSpeakerRow() {
     currentContent.speakers.push({ name: "", role: "", photoData: "" });
     renderSpeakers(currentContent.speakers);
@@ -1078,6 +1139,11 @@
   function addWorkshopRow() {
     currentContent.workshops.push({ title: "", facilitator: "", description: "" });
     renderWorkshops(currentContent.workshops);
+  }
+
+  function addHotelRow() {
+    currentContent.hotels.push({ name: "", brand: "", address: "", cityState: "", rate: "", rateNote: "Listed nightly rate; taxes may apply", bookingUrl: "" });
+    renderHotels(currentContent.hotels);
   }
 
   function resizeImageDataUrl(dataUrl, maxSize = 360, quality = 0.82) {
@@ -1175,10 +1241,12 @@
   document.getElementById("saveSpeakersButton").addEventListener("click", saveSpeakers);
   document.getElementById("saveWorkshopsButton").addEventListener("click", saveWorkshops);
   document.getElementById("saveScheduleButton").addEventListener("click", saveSchedule);
+  document.getElementById("saveHotelsButton").addEventListener("click", saveHotels);
   document.getElementById("saveCredentialsButton").addEventListener("click", saveCredentials);
   document.getElementById("addSpeakerButton").addEventListener("click", addSpeakerRow);
   document.getElementById("addWorkshopButton").addEventListener("click", addWorkshopRow);
   document.getElementById("addScheduleButton").addEventListener("click", addScheduleRow);
+  document.getElementById("addHotelButton").addEventListener("click", addHotelRow);
   document.getElementById("exportCsvButton").addEventListener("click", exportCsv);
   document.getElementById("clearRegistrationsButton").addEventListener("click", clearRegistrations);
   document.querySelectorAll(".sidebar button").forEach((button) => {

@@ -542,6 +542,11 @@
     height: 100%;
     object-fit: cover;
   }
+  .speaker-seal.speaker-seal--single-ring {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
   .speaker-card h3 {
     margin: 0;
     font-family: var(--font-display);
@@ -585,6 +590,85 @@
     margin: 0;
     color: #5d5764;
     line-height: 1.65;
+  }
+
+  .hotel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 1.2rem;
+  }
+  .hotel-section {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: #fffdf6;
+    background:
+      radial-gradient(circle at 12% 20%, rgba(211, 170, 71, 0.2), transparent 28%),
+      radial-gradient(circle at 88% 75%, rgba(112, 63, 153, 0.32), transparent 34%),
+      linear-gradient(135deg, #140820 0%, #2a163f 52%, #42225f 100%);
+    border-top: 1px solid rgba(211, 170, 71, 0.35);
+    border-bottom: 1px solid rgba(211, 170, 71, 0.35);
+  }
+  .hotel-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.22;
+    background-image: linear-gradient(120deg, transparent 0 46%, rgba(255,255,255,0.08) 46% 46.2%, transparent 46.2% 100%);
+  }
+  .hotel-section .section-head span { color: var(--gold-soft); }
+  .hotel-section .section-head h2 { color: #fffdf6; }
+  .hotel-section .section-head p,
+  .hotel-section .hotel-note { color: rgba(255, 253, 246, 0.78); }
+  .hotel-card {
+    padding: 1.6rem;
+    border: 1px solid rgba(241, 220, 157, 0.32);
+    border-top: 5px solid var(--gold);
+    background: linear-gradient(160deg, rgba(255,255,255,0.13), rgba(255,255,255,0.055));
+    box-shadow: 0 26px 60px rgba(9, 3, 15, 0.34);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+  .hotel-card .hotel-label {
+    color: var(--gold-soft);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .hotel-card h3 {
+    margin: 0.6rem 0 0.8rem;
+    color: #fffdf6;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+  .hotel-card address {
+    color: rgba(255, 253, 246, 0.76);
+    font-style: normal;
+    line-height: 1.6;
+  }
+  .hotel-rate {
+    margin: 1rem 0 0;
+    color: var(--gold-soft);
+    font-family: var(--font-display);
+    font-size: 1.65rem;
+    font-weight: 900;
+  }
+  .hotel-rate-note {
+    margin: 0.15rem 0 1.15rem;
+    color: rgba(255, 253, 246, 0.68);
+    font-size: 0.86rem;
+  }
+  .hotel-card .btn { margin-top: auto; align-self: flex-start; }
+  .hotel-note {
+    margin: 1.25rem 0 0;
+    color: #696473;
+    text-align: center;
   }
 
   .schedule-list {
@@ -958,6 +1042,7 @@
         <li><a href="#speakers">Speakers</a></li>
         <li><a href="#workshops">Workshops</a></li>
         <li><a href="#schedule">Schedule</a></li>
+        <li><a href="#hotels">Hotels</a></li>
         <li><a href="#venue">Venue</a></li>
         <li><a class="cta-link" href="register.html">Register</a></li>
       </ul>
@@ -1096,6 +1181,18 @@
     </div>
   </section>
 
+  <section id="hotels" class="section hotel-section">
+    <div class="shell">
+      <div class="section-head">
+        <span>Stay Nearby</span>
+        <h2>Hotel Accommodations</h2>
+        <p>Advance booking is available for the 2026 Council, October 22–25, in Chicago, Illinois.</p>
+      </div>
+      <div id="hotelGrid" class="hotel-grid"></div>
+      <p class="hotel-note">All hotels are within approximately 30 minutes of the host church. Rates and availability are subject to change; reserve early for the best selection.</p>
+    </div>
+  </section>
+
   <section class="section">
     <div class="shell">
       <div class="register-banner">
@@ -1165,6 +1262,10 @@
       { time: "Sunday 12:00 PM", title: "Morning Workshops", speaker: "Workshop Facilitators" },
       { time: "Sunday 6:00 PM", title: "Closing Night Service", speaker: "Featured Night Speaker" }
     ],
+    hotels: [
+      { name: "Holiday Inn Chicago - Midway Airport S", brand: "IHG Hotel", address: "7353 S. Cicero Avenue", cityState: "Chicago, IL 60629", rate: "$148-$161", rateNote: "Listed nightly rate; taxes may apply", bookingUrl: "https://www.ihg.com/holidayinn/hotels/us/en/chicago/chici/hoteldetail" },
+      { name: "Best Western Inn & Suites - Midway Airport", brand: "Burbank, Illinois", address: "8220 S. Cicero Avenue", cityState: "Burbank, IL 60459", rate: "$166", rateNote: "Listed nightly rate; taxes may apply", bookingUrl: "https://www.bestwestern.com/en_US/book/hotels-in-burbank/best-western-inn-suites-midway-airport/propertyCode.14159.html" }
+    ],
     venue: {
       name: "Northern North Assembly Hall",
       address: "123 Ministry Lane",
@@ -1191,6 +1292,7 @@
         : DEFAULT_CONTENT.speakers,
       workshops: Array.isArray(stored.workshops) && stored.workshops.length ? stored.workshops : DEFAULT_CONTENT.workshops,
       schedule: Array.isArray(stored.schedule) && stored.schedule.length ? stored.schedule : DEFAULT_CONTENT.schedule,
+      hotels: Array.isArray(stored.hotels) && stored.hotels.length ? stored.hotels : DEFAULT_CONTENT.hotels,
       venue: { ...DEFAULT_CONTENT.venue, ...(stored.venue || {}) },
       pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
     };
@@ -1235,7 +1337,7 @@
     const speakerGrid = document.getElementById("speakerGrid");
     speakerGrid.innerHTML = content.speakers.map((speaker) => `
       <article class="speaker-card card">
-        <div class="speaker-seal">${speaker.photoData ? `<img src="${escapeHtml(speaker.photoData)}" alt="${escapeHtml(speaker.name || "Speaker")}">` : "✝"}</div>
+        <div class="speaker-seal${isElderMuich(speaker.name) ? " speaker-seal--single-ring" : ""}">${speaker.photoData ? `<img src="${escapeHtml(speaker.photoData)}" alt="${escapeHtml(speaker.name || "Speaker")}">` : "✝"}</div>
         <h3>${escapeHtml(speaker.name || "")}</h3>
         <p>${escapeHtml(speaker.role || "")}</p>
       </article>
@@ -1258,6 +1360,18 @@
           <strong>${escapeHtml(item.title || "")}</strong>
           ${item.speaker ? `<span>${escapeHtml(item.speaker)}</span>` : ""}
         </div>
+      </article>
+    `).join("");
+
+    const hotelGrid = document.getElementById("hotelGrid");
+    hotelGrid.innerHTML = content.hotels.map((hotel) => `
+      <article class="hotel-card card">
+        <span class="hotel-label">${escapeHtml(hotel.brand || "Hotel Accommodation")}</span>
+        <h3>${escapeHtml(hotel.name || "")}</h3>
+        <address>${escapeHtml(hotel.address || "")}<br>${escapeHtml(hotel.cityState || "")}</address>
+        <div class="hotel-rate">${escapeHtml(hotel.rate || "")}</div>
+        <p class="hotel-rate-note">${escapeHtml(hotel.rateNote || "")}</p>
+        ${safeBookingUrl(hotel.bookingUrl) ? `<a class="btn btn-primary" href="${escapeHtml(safeBookingUrl(hotel.bookingUrl))}" target="_blank" rel="noopener noreferrer">View Hotel &amp; Book</a>` : ""}
       </article>
     `).join("");
 
@@ -1325,6 +1439,19 @@
 
     tick();
     setInterval(tick, 1000);
+  }
+
+  function safeBookingUrl(value) {
+    try {
+      const url = new URL(String(value || ""));
+      return url.protocol === "https:" ? url.href : "";
+    } catch {
+      return "";
+    }
+  }
+
+  function isElderMuich(name) {
+    return /elder\s+l\.?\s+muich/i.test(String(name || ""));
   }
 
   function escapeHtml(value) {
