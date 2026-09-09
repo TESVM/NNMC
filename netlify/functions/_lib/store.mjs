@@ -45,6 +45,10 @@ export const DEFAULT_CONTENT = {
     { time: "Sunday 12:00 PM", title: "Morning Workshops", speaker: "Workshop Facilitators" },
     { time: "Sunday 6:00 PM", title: "Closing Night Service", speaker: "Featured Night Speaker" }
   ],
+  hotels: [
+    { name: "Holiday Inn Chicago - Midway Airport S", brand: "IHG Hotel", address: "7353 S. Cicero Avenue", cityState: "Chicago, IL 60629", rate: "$148-$161", rateNote: "Listed nightly rate; taxes may apply", bookingUrl: "https://www.ihg.com/holidayinn/hotels/us/en/chicago/chici/hoteldetail" },
+    { name: "Best Western Inn & Suites - Midway Airport", brand: "Burbank, Illinois", address: "8220 S. Cicero Avenue", cityState: "Burbank, IL 60459", rate: "$166", rateNote: "Listed nightly rate; taxes may apply", bookingUrl: "https://www.bestwestern.com/en_US/book/hotels-in-burbank/best-western-inn-suites-midway-airport/propertyCode.14159.html" }
+  ],
   venue: {
     name: "Northern North Assembly Hall",
     address: "123 Ministry Lane",
@@ -109,6 +113,7 @@ export function mergeContent(stored = {}) {
       : structuredClone(DEFAULT_CONTENT.speakers),
     workshops: Array.isArray(stored.workshops) && stored.workshops.length ? stored.workshops : structuredClone(DEFAULT_CONTENT.workshops),
     schedule: Array.isArray(stored.schedule) && stored.schedule.length ? stored.schedule : structuredClone(DEFAULT_CONTENT.schedule),
+    hotels: Array.isArray(stored.hotels) && stored.hotels.length ? stored.hotels : structuredClone(DEFAULT_CONTENT.hotels),
     venue: { ...DEFAULT_CONTENT.venue, ...(stored.venue || {}) },
     pricing: { ...DEFAULT_CONTENT.pricing, ...(stored.pricing || {}) }
   };
