@@ -15,14 +15,16 @@ export default async (req) => {
     }
   }
 
+  if (body.tier !== "regular") {
+    return json({ error: "Early bird registration is closed. Please select the $35 regular registration option." }, 400);
+  }
+
   if (!process.env.STRIPE_SECRET_KEY) {
     return json({ error: "STRIPE_SECRET_KEY is not configured." }, 500);
   }
 
   const tier = body.tier;
-  const priceId = tier === "early"
-    ? process.env.STRIPE_EARLY_PRICE
-    : process.env.STRIPE_REGULAR_PRICE;
+  const priceId = process.env.STRIPE_REGULAR_PRICE;
 
   if (!priceId) {
     return json({ error: "Stripe price IDs are not configured." }, 500);

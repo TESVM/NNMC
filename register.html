@@ -314,6 +314,12 @@
     font-weight: 700;
   }
 
+  .tier-option.closed { cursor: not-allowed; }
+  .tier-option.closed .tier-body { background: #eeeae4; border-color: #d1cac0; }
+  .tier-option.closed strong, .tier-option.closed .tier-price { color: #756d65; text-decoration: line-through; }
+  .tier-closed-notice { margin-top: 0.75rem; color: #6d3535; font-weight: 700; }
+  .tier-option input:focus-visible + .tier-body { outline: 3px solid var(--plum); outline-offset: 3px; }
+
   .actions {
     display: flex;
     gap: 0.8rem;
@@ -643,15 +649,16 @@
 
     const tierGrid = document.getElementById("tierGrid");
     tierGrid.innerHTML = `
-      <label class="tier-option">
-        <input type="radio" name="tier" value="early" checked>
+      <label class="tier-option closed">
+        <input type="radio" name="tier" value="early" disabled aria-describedby="earlyClosedNotice">
         <span class="tier-body">
           <strong>${escapeHtml(content.pricing.earlyLabel)}</strong>
           <span class="tier-price">$${escapeHtml(content.pricing.earlyPrice)}</span>
+          <span class="tier-closed-notice" id="earlyClosedNotice">Early bird closed</span>
         </span>
       </label>
       <label class="tier-option">
-        <input type="radio" name="tier" value="regular">
+        <input type="radio" name="tier" value="regular" checked>
         <span class="tier-body">
           <strong>${escapeHtml(content.pricing.regularLabel)}</strong>
           <span class="tier-price">$${escapeHtml(content.pricing.regularPrice)}</span>
@@ -732,7 +739,7 @@
       return;
     }
 
-    const tier = document.querySelector('input[name="tier"]:checked')?.value || "early";
+    const tier = document.querySelector('input[name="tier"]:checked')?.value || "regular";
     const payload = {
       fullName: document.getElementById("fullName").value.trim(),
       email: document.getElementById("email").value.trim(),
