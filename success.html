@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer"><meta name="robots" content="noindex,nofollow">
+<title>Registration Receipt · Northern North Ministerial Council</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#190e2b;color:#292131;font:17px/1.6 system-ui,sans-serif;padding:48px 20px}main{max-width:720px;margin:auto;background:#fffdf8;border-top:7px solid #c5a451;border-radius:12px;padding:40px} .eyebrow{color:#715520;font-size:12px;letter-spacing:2px;font-weight:700}h1{font:700 34px/1.2 Georgia,serif;color:#351750}h2{font-size:19px}dl{border-top:1px solid #ddd4e2;padding-top:20px}dt{font-weight:700;margin-top:16px}dd{margin:0;overflow-wrap:anywhere}a,button{display:inline-block;padding:11px 18px;margin:12px 10px 0 0;background:#431e60;color:white;border:0;border-radius:5px;font:inherit;cursor:pointer}a.secondary{background:#eee8f1;color:#351750} [hidden]{display:none!important}@media(max-width:500px){main{padding:24px}h1{font-size:28px}}@media print{body{background:white;padding:0}main{border:0}nav,button{display:none}}
+</style>
+</head>
+<body><main>
+<p class="eyebrow">A.O.H. CHURCH OF GOD</p><h2>Northern North Ministerial Council</h2>
+<h1 id="title">Checking your payment…</h1><p id="message" role="status" aria-live="polite">Please wait while we retrieve your registration receipt.</p>
+<section id="receipt" hidden><dl><dt>Registrant</dt><dd id="name"></dd><dt>Amount paid</dt><dd id="amount"></dd><dt>Payment status</dt><dd>Paid</dd><dt>Checkout reference</dt><dd id="reference"></dd></dl><a id="stripeReceipt" hidden rel="noreferrer">View Stripe receipt</a><button id="print" type="button">Print / Save receipt</button></section>
+<button id="retry" type="button" hidden>Check again</button><nav><a class="secondary" href="/">Return to council website</a></nav>
+<script type="module">
+const $ = id => document.getElementById(id);
+const sessionId = new URLSearchParams(location.search).get('session_id');
+async function loadReceipt(){
+  $('retry').hidden=true;
+  if(!sessionId){$('title').textContent='Registration receipt';$('message').textContent='Open the confirmation link provided after Stripe checkout to view your receipt. If you already paid, please do not submit another payment.';return;}
+  try{
+    const response=await fetch('/api/checkout-receipt?session_id='+encodeURIComponent(sessionId),{cache:'no-store'});
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error || 'Unable to retrieve your receipt. Please try again. Do not pay again.');
+    if(!data.paid){$('title').textContent='Payment confirmation pending';$('message').textContent=data.message;$('retry').hidden=false;return;}
+    $('title').textContent='Thank you — registration paid';$('message').textContent='Your payment is confirmed. Keep this receipt for your records.';
+    $('name').textContent=data.name || 'Council registrant';
+    $('amount').textContent=new Intl.NumberFormat('en-US',{style:'currency',currency:data.currency}).format(data.amount/100);
+    $('reference').textContent=data.reference;$('receipt').hidden=false;
+    if(data.receiptUrl){const url=new URL(data.receiptUrl);if(url.origin==='https://pay.stripe.com'){$('stripeReceipt').href=url.href;$('stripeReceipt').hidden=false;}}
+  }catch(error){$('title').textContent='Receipt temporarily unavailable';$('message').textContent=error.message;$('retry').hidden=false;}
+}
+$('print').addEventListener('click',()=>window.print());$('retry').addEventListener('click',loadReceipt);loadReceipt();
+</script></main></body></html>

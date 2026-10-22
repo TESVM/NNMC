@@ -15,3 +15,8 @@
   from = "/program"
   to = "https://northern-north-council-program.briskcoati11.chatgpt.site"
   status = 302
+
+[[redirects]]
+  from = "/success"
+  to = "/success.html"
+  status = 200

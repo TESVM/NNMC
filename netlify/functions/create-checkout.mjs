@@ -36,6 +36,7 @@ export default async (req) => {
       payment_method_types: ["card"],
       mode: "payment",
       customer_email: body.email,
+      payment_intent_data: { receipt_email: body.email },
       line_items: [{ price: priceId, quantity: 1 }],
       metadata: {
         fullName:      body.fullName,

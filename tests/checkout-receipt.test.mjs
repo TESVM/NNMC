@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {receiptHandler} from '../netlify/functions/checkout-receipt.mjs';
+process.env.STRIPE_SECRET_KEY='test-key';
+const request = (id='cs_test_example', method='GET') => new Request('https://example.org/api/checkout-receipt?session_id='+id,{method});
+const paid = {status:'complete',payment_status:'paid',id:'cs_test_example',metadata:{fullName:'Test Registrant',phone:'private'},amount_total:5000,currency:'usd',payment_intent:{latest_charge:{receipt_url:'https://pay.stripe.com/receipts/example'}}};
+const handlerFor = session => receiptHandler(()=>({checkout:{sessions:{retrieve:async(id,options)=>{assert.equal(id,'cs_test_example');assert.deepEqual(options.expand,['payment_intent.latest_charge']);return session;}}}}));
+test('paid checkout returns receipt without registration contact metadata',async()=>{const response=await handlerFor(paid)(request());const data=await response.json();assert.equal(data.paid,true);assert.equal(data.amount,5000);assert.equal(data.receiptUrl,paid.payment_intent.latest_charge.receipt_url);assert.equal(data.phone,undefined);assert.equal(response.headers.get('cache-control'),'no-store');});
+test('unpaid or incomplete checkout cannot show a paid receipt',async()=>{for(const session of [{...paid,payment_status:'unpaid'},{...paid,status:'open'}]){const data=await (await handlerFor(session)(request())).json();assert.equal(data.paid,false);assert.equal(data.receiptUrl,undefined);}});
+test('missing charge still provides confirmation',async()=>{const data=await (await handlerFor({...paid,payment_intent:null})(request())).json();assert.equal(data.paid,true);assert.equal(data.receiptUrl,null);});
+test('untrusted receipt URLs are omitted',async()=>{const data=await (await handlerFor({...paid,payment_intent:{latest_charge:{receipt_url:'https://example.org'}}})(request())).json();assert.equal(data.receiptUrl,null);});
+test('invalid requests never contact Stripe',async()=>{const handler=receiptHandler(()=>{throw Error('should not run');});assert.equal((await handler(request(''))).status,400);assert.equal((await handler(request('invalid'))).status,400);assert.equal((await handler(request('cs_test_example','POST'))).status,405);});
+test('Stripe failures produce recoverable errors without leaking details',async()=>{const handler=receiptHandler(()=>({checkout:{sessions:{retrieve:async()=>{throw Error('secret error detail');}}}}));const response=await handler(request());assert.equal(response.status,502);assert.match((await response.json()).error,/Do not pay again/);});
