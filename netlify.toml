@@ -10,3 +10,8 @@
   from = "/admin"
   to = "/admin.html"
   status = 200
+
+[[redirects]]
+  from = "/program"
+  to = "https://northern-north-council-program.briskcoati11.chatgpt.site"
+  status = 302
