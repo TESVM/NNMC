@@ -561,6 +561,44 @@
     font-size: clamp(1.05rem, 1.8vw, 1.28rem);
   }
 
+  .featured-workshop {
+    display: block;
+    margin-bottom: 1.2rem;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    border-radius: 26px;
+    background: linear-gradient(120deg, #2a163f 0%, #4d2a73 100%);
+    color: #fbf6ec;
+    box-shadow: 0 16px 40px rgba(42, 22, 63, 0.22);
+    transition: transform 0.2s ease;
+  }
+  .featured-workshop:hover { transform: translateY(-3px); }
+  .featured-workshop-tag {
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .featured-workshop strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+  }
+  .featured-workshop-by { display: block; font-weight: 700; color: var(--gold-soft); margin-bottom: 0.7rem; }
+  .featured-workshop p { margin: 0 0 1rem; color: #e2d8ee; line-height: 1.6; max-width: 70ch; }
+  .featured-workshop-cta {
+    display: inline-block;
+    padding: 0.65rem 1.3rem;
+    border-radius: 999px;
+    background: var(--gold);
+    color: #1c0d2c;
+    font-weight: 700;
+  }
+
   .workshop-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -1189,6 +1227,13 @@ body{background:#fff} .preview-notice{background:#f5edf9;color:#602279;text-alig
         <h2>Workshops and Facilitators</h2>
         <p>Use this space for breakout sessions, ministry labs, and practical training with each facilitator clearly assigned.</p>
       </div>
+      <a class="featured-workshop" href="/ai-workshop">
+        <span class="featured-workshop-tag">Featured Workshop · AI for Ministry</span>
+        <strong>Write the Vision, Make It Plain</strong>
+        <span class="featured-workshop-by">James L. Wright, MBA</span>
+        <p>How artificial intelligence can serve your church’s processes, branding and production without replacing the anointing. View the presentation, the S.E.R.V.E. prompting guide and the 7-Day AI Challenge.</p>
+        <span class="featured-workshop-cta">View Workshop &amp; Presentation →</span>
+      </a>
       <div id="workshopGrid" class="workshop-grid"></div>
     </div>
   </section>
